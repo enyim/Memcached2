@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RootNamespace>Enyim.Memcached.Diagnostics</RootNamespace>
+    <AssemblyName>Enyim.Memcached.Diagnostics.Serilog</AssemblyName>
+    <AssemblyTitle>Enyim.Memcached.Diagnostics.Serilog</AssemblyTitle>
+    <Description>Enyim.Memcached diagnostics logging provider using Serilog 2.x</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="serilog" Version="2.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Enyim.Caching.Memcached\Memcached.csproj" />
+  </ItemGroup>
+
+</Project>

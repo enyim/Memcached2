@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RootNamespace>Enyim.Caching.Memcached</RootNamespace>
+    <AssemblyName>Enyim.Caching.Memcached2</AssemblyName>
+    <AssemblyTitle>EnyimMemcached2</AssemblyTitle>
+    <Description>Memcached client library for .NET based languages.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Enyim.Build.Rewriters.EventSource" Version="0.8.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Enyim.Build.Rewriters.LogTo" Version="0.8.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <Import Project="..\Enyim\Enyim.projitems" Label="Shared" />
+  <Import Project="..\Enyim.Caching\Caching.projitems" Label="Shared" />
+
+</Project>

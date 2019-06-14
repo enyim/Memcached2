@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AssemblyName>Enyim.Caching.Tests.SerilogAdapterTests</AssemblyName>
+  </PropertyGroup>
+
+  <!-- coverlet config -->
+  <PropertyGroup>
+    <Include>[*]Enyim.Caching.Diagnostics*</Include>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="serilog" Version="2.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Extensions\SerilogAdapter\SerilogAdapter.csproj" />
+  </ItemGroup>
+
+</Project>

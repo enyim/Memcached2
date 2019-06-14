@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>9596b249-9ee2-4f7f-bc47-cdbf7794a7c9</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Caching</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AsyncSocket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ClusterBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ClusterExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ICluster.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IFailurePolicy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IFailurePolicyFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IItemOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)INode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)INodeLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IReconnectPolicyFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IReconnectPolicy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ISocket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ISocketFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ISocketOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DefaultSocketFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DictionaryExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ImmediateFailurePolicy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Murmur64_64.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NodeBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NodePerformanceMonitor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NodeQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReadBuffer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SegmentedStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SerializationException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SequenceBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SequenceBuilder.Segment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SocketAsyncEventArgsFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SocketOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tracing\AsyncSocketEventSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tracing\NodeBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WriteBuffer.cs" />
+  </ItemGroup>
+</Project>

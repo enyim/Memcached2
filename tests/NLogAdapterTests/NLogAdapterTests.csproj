@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AssemblyName>Enyim.Caching.Tests.NLogAdapterTests</AssemblyName>
+  </PropertyGroup>
+
+  <!-- coverlet config -->
+  <PropertyGroup>
+    <Include>[*]Enyim.Caching.Diagnostics*</Include>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Extensions\NLogAdapter\NLogAdapter.csproj" />
+  </ItemGroup>
+
+</Project>
