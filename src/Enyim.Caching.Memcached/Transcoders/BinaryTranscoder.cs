@@ -13,8 +13,8 @@ namespace Enyim.Caching.Memcached
 		private const byte TRUE = 1;
 		private const byte FALSE = 0;
 
-		public const uint RawDataFlag = 0x10fa52;
-		public const uint FlagPrefix = 0x10fa00;
+		public const uint FlagPrefix = 0x10fa5200;
+		public const uint RawDataFlag = FlagPrefix | 0xaa;
 
 		private static readonly Encoding Utf8NoBom = new UTF8Encoding(false);
 
