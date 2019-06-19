@@ -2,7 +2,7 @@
 
 namespace Enyim.Caching.Memcached
 {
-	public class EverythingShared : SharedClusterFixture<SharedServerFixture>
+	public class TheTestFixture : SharedClusterFixture<SharedLocalServersFixture>
 	{
 	}
 }

@@ -7,11 +7,11 @@ using Moq;
 
 namespace Enyim.Caching.Memcached
 {
-	public partial class ClientFailTests : TestBase, IClassFixture<SharedServerFixture>
+	public partial class ClientFailTests : TestBase, IClassFixture<SharedLocalServersFixture>
 	{
-		private readonly SharedServerFixture fixture;
+		private readonly SharedLocalServersFixture fixture;
 
-		public ClientFailTests(SharedServerFixture fixture)
+		public ClientFailTests(SharedLocalServersFixture fixture)
 		{
 			this.fixture = fixture;
 		}

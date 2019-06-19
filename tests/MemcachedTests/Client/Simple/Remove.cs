@@ -6,9 +6,9 @@ using Xunit;
 
 namespace Enyim.Caching.Memcached.Client
 {
-	public class RemoveAsync : MemcachedClientTestBase<EverythingShared>
+	public class RemoveAsync : MemcachedClientTestBase<TheTestFixture>
 	{
-		public RemoveAsync(EverythingShared fixture) : base(fixture) { }
+		public RemoveAsync(TheTestFixture fixture) : base(fixture) { }
 
 		[Fact]
 		public async Task When_Removing_A_Valid_Key_Result_Is_Successful()

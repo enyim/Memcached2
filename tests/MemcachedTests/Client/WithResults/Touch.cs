@@ -7,9 +7,9 @@ using Xunit;
 
 namespace Enyim.Caching.Memcached.Client
 {
-	public class TouchWithResultAsync : MemcachedClientTestBase<EverythingShared>
+	public class TouchWithResultAsync : MemcachedClientTestBase<TheTestFixture>
 	{
-		public TouchWithResultAsync(EverythingShared fixture) : base(fixture) { }
+		public TouchWithResultAsync(TheTestFixture fixture) : base(fixture) { }
 
 		public const int WaitButStillAlive = 500;
 		public const int WaitUntilExpires = 6000;

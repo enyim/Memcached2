@@ -7,9 +7,9 @@ using Xunit;
 
 namespace Enyim.Caching.Memcached.Client
 {
-	public class StatsAsync : MemcachedClientTestBase<EverythingShared>
+	public class StatsAsync : MemcachedClientTestBase<TheTestFixture>
 	{
-		public StatsAsync(EverythingShared fixture) : base(fixture) { }
+		public StatsAsync(TheTestFixture fixture) : base(fixture) { }
 
 		[Fact]
 		public async Task When_Getting_The_Stats_It_Has_The_Default_Items()

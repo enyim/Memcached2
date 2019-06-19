@@ -7,9 +7,9 @@ using Xunit;
 
 namespace Enyim.Caching.Memcached.Client
 {
-	public class ConcatAsync : MemcachedClientTestBase<EverythingShared>
+	public class ConcatAsync : MemcachedClientTestBase<TheTestFixture>
 	{
-		public ConcatAsync(EverythingShared fixture) : base(fixture) { }
+		public ConcatAsync(TheTestFixture fixture) : base(fixture) { }
 
 		[Fact]
 		public async Task When_Appending_To_Existing_Value_Result_Is_Successful()

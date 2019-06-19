@@ -6,9 +6,9 @@ using Xunit;
 
 namespace Enyim.Caching.Memcached.Client
 {
-	public class MutateWithResultAsync : MemcachedClientTestBase<EverythingShared>
+	public class MutateWithResultAsync : MemcachedClientTestBase<TheTestFixture>
 	{
-		public MutateWithResultAsync(EverythingShared fixture) : base(fixture) { }
+		public MutateWithResultAsync(TheTestFixture fixture) : base(fixture) { }
 
 		private void AssertEqual<T>(T expected, OperationResult<T> actual)
 		{

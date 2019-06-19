@@ -7,9 +7,9 @@ using Xunit;
 
 namespace Enyim.Caching.Memcached.Client
 {
-	public class GetAsync : MemcachedClientTestBase<EverythingShared>
+	public class GetAsync : MemcachedClientTestBase<TheTestFixture>
 	{
-		public GetAsync(EverythingShared fixture) : base(fixture) { }
+		public GetAsync(TheTestFixture fixture) : base(fixture) { }
 
 		[Fact]
 		public async Task Can_Read_Items_Larger_Than_Receive_Buffer()

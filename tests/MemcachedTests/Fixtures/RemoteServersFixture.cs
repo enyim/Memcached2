@@ -1,38 +1,20 @@
 ﻿using System;
 using System.Linq;
-using Xunit;
+using System.Net;
 
 namespace Enyim.Caching.Memcached
 {
-	public abstract class TestBase
+	public class RemoteServersFixture : IServerFixture
 	{
-		private readonly string name;
-		private readonly Random random;
-
-		protected TestBase()
+		public IPEndPoint[] Run()
 		{
-			this.name = GetType().Name + "_";
-			this.random = new Random();
+			var host = IPAddress.Parse("10.211.55.10");
+			var ports = new[] { 12000, 12001, 12002, 12003 };
+
+			return ports.Select(p => new IPEndPoint(host, p)).ToArray();
 		}
 
-		protected TestBase(string name)
-		{
-			this.name = name + "_";
-			this.random = new Random();
-		}
-
-		protected string GetUniqueKey(string prefix = null)
-			=> (!String.IsNullOrEmpty(prefix) ? prefix + "_" : "")
-				+ name
-				+ DateTime.Now.Ticks;
-
-		protected string[] GetUniqueKeys(string prefix = null, int max = 5)
-		 => Enumerable
-				.Range(0, max)
-				.Select(i => GetUniqueKey(prefix) + "_" + i)
-				.ToArray();
-
-		protected string GetRandomString() => name + "_random_value_" + random.Next();
+		void IDisposable.Dispose() { }
 	}
 }
 

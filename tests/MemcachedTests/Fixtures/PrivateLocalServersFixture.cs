@@ -1,48 +1,25 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net;
 
 namespace Enyim.Caching.Memcached
 {
-	public class SharedServerFixture : IServerFixture
+	public class PrivateLocalServersFixture : IServerFixture
 	{
-		private static readonly object serverLock = new Object();
-		private static MemcachedServerGroup sharedServers;
-		private static IPEndPoint[] endpoints;
-
-		private static int sharedRefCount;
+		private MemcachedServerGroup servers;
 
 		public IPEndPoint[] Run()
 		{
-			lock (serverLock)
-			{
-				if (sharedServers == null)
-				{
-					sharedServers = new MemcachedServerGroup(3);
-					endpoints = sharedServers.Run();
-				}
+			if (servers != null) throw new InvalidOperationException("Already started");
 
-				sharedRefCount++;
-			}
+			servers = new MemcachedServerGroup(3);
 
-			return endpoints;
+			return servers.Run();
 		}
 
 		void IDisposable.Dispose()
 		{
-			lock (serverLock)
-			{
-				Debug.Assert(sharedRefCount > 0);
-				Debug.Assert(sharedServers != null);
-
-				sharedRefCount--;
-
-				if (sharedRefCount == 0)
-				{
-					sharedServers.Dispose();
-					sharedServers = null;
-				}
-			}
+			servers?.Dispose();
+			servers = null;
 		}
 	}
 }

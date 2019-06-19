@@ -6,9 +6,9 @@ using Xunit;
 
 namespace Enyim.Caching.Memcached.Client
 {
-	public class MutateAsync : MemcachedClientTestBase<EverythingShared>
+	public class MutateAsync : MemcachedClientTestBase<TheTestFixture>
 	{
-		public MutateAsync(EverythingShared fixture) : base(fixture) { }
+		public MutateAsync(TheTestFixture fixture) : base(fixture) { }
 
 		[Fact]
 		public async Task When_Incrementing_Value_Result_Is_Successful()

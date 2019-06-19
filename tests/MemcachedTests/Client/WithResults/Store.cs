@@ -6,9 +6,9 @@ using Xunit;
 
 namespace Enyim.Caching.Memcached.Client
 {
-	public class StoreWithResultAsync : MemcachedClientTestBase<EverythingShared>
+	public class StoreWithResultAsync : MemcachedClientTestBase<TheTestFixture>
 	{
-		public StoreWithResultAsync(EverythingShared fixture) : base(fixture) { }
+		public StoreWithResultAsync(TheTestFixture fixture) : base(fixture) { }
 
 		[Fact]
 		public async Task When_Storing_Item_With_New_Key_And_StoreMode_Add_Result_Is_Successful()
