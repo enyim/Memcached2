@@ -12,9 +12,9 @@ namespace Enyim.Caching.Memcached.Client
 		public TouchWithResultAsync(EverythingShared fixture) : base(fixture) { }
 
 		public const int WaitButStillAlive = 500;
-		public const int WaitUntilExpires = 5000;
+		public const int WaitUntilExpires = 6000;
 
-		static readonly Expiration DefaultExpiration = new Expiration(3);
+		static readonly Expiration DefaultExpiration = new Expiration(2);
 		static readonly Expiration NewExpiration = new Expiration(20);
 
 		[Fact, Trait("slow", "yes")]
@@ -28,8 +28,8 @@ namespace Enyim.Caching.Memcached.Client
 
 			var newValue = await Client.GetAndTouchWithResultAsync<string>(key, NewExpiration);
 			Assert.Equal(value, newValue.Value);
+			Thread.Sleep(WaitUntilExpires); // if expiration stays the DefaultExpiration
 
-			Thread.Sleep(WaitUntilExpires);
 			Assert.Equal(value, await Client.GetAsync<string>(key));
 		}
 
@@ -42,9 +42,9 @@ namespace Enyim.Caching.Memcached.Client
 			AssertSuccess(await Client.StoreWithResultAsync(StoreMode.Set, key, value, expiration: DefaultExpiration), message: "item not stored");
 			Thread.Sleep(WaitButStillAlive);
 
-			AssertSuccess(await Client.TouchWithResultAsync(key, NewExpiration), hasCas: false, message: "touch failed");
+			AssertSuccess(await Client.TouchWithResultAsync(key, NewExpiration), hasCas: null, message: "touch failed");
+			Thread.Sleep(WaitUntilExpires); // if expiration stays the DefaultExpiration
 
-			Thread.Sleep(WaitUntilExpires);
 			Assert.Equal(value, await Client.GetAsync<string>(key));
 		}
 	}

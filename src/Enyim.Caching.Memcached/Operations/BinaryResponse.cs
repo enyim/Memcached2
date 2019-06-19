@@ -42,6 +42,9 @@ namespace Enyim.Caching.Memcached.Operations
 		public uint CorrelationId { get; private set; }
 		public ulong CAS { get; private set; }
 
+		public ReadOnlySpan<byte> Header => header.Span;
+		public ReadOnlySpan<byte> Body => body.Span;
+
 		public ReadOnlySpan<byte> Extra => extraBuffer.Span;
 		public ReadOnlySpan<byte> Key => keyBuffer.Span;
 		public ReadOnlySpan<byte> Value => valueBuffer.Span;
@@ -72,7 +75,7 @@ namespace Enyim.Caching.Memcached.Operations
 		{
 			if (StatusCode == Protocol.Status.Success)
 			{
-				if (bodyLength != null && bodyLength != body.Length) Debug.Fail($"Response expected to have {bodyLength} long body, got {body.Length} instead");
+				if (bodyLength != null && bodyLength != body.Length) Debug.Fail($"Response expected to have {bodyLength} long body, got {body.Length} instead: {BitConverter.ToString(body.Slice(0, Math.Min(body.Length, 32)).ToArray())}");
 
 				if (extra != null)
 				{

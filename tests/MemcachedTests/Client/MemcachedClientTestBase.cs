@@ -53,19 +53,22 @@ namespace Enyim.Caching.Memcached
 			await assert(keys.ToArray(), value);
 		}
 
-		protected void AssertSuccess(OperationResult result, bool hasCas = true, string message = null)
+		protected void AssertSuccess(OperationResult result, bool? hasCas = true /* yes, no, maybe */, string message = null)
 		{
 			Assert.True(result.Success, message);
 			Assert.Null(result.Exception);
 			Assert.Equal((OperationStatus)Protocol.Status.Success, result.StatusCode);
 
-			if (hasCas)
+			if (hasCas != null)
 			{
-				Assert.True(result.Cas > 0, "expected Cas value, but result does not have it set");
-			}
-			else
-			{
-				Assert.True(result.Cas == 0, "result should not have Cas value");
+				if (hasCas.Value)
+				{
+					Assert.True(result.Cas > 0, "expected Cas value, but result does not have it set");
+				}
+				else
+				{
+					Assert.True(result.Cas == 0, "result should not have Cas value");
+				}
 			}
 		}
 

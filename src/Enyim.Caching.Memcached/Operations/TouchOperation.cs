@@ -27,6 +27,8 @@ namespace Enyim.Caching.Memcached.Operations
 				+---------------+---------------+---------------+---------------+
 				Total 4 bytes
 
+			returns the flags if nonzero (in 1.5.x)
+
 		*/
 		protected override IMemcachedRequest CreateRequest()
 		{
@@ -49,7 +51,12 @@ namespace Enyim.Caching.Memcached.Operations
 			}
 			else
 			{
-				response.MustHave(0, false, false, false);
+#if DEBUG
+				if (response.Body.Length == 0)
+					response.MustHave(0, false, false, false);
+				else
+					response.MustHave(4, true, false, false);
+#endif
 			}
 
 			return false;
