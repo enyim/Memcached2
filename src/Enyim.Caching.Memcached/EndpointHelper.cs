@@ -8,22 +8,29 @@ namespace Enyim.Caching.Memcached
 {
 	public static class EndPointHelper
 	{
-		public static IPEndPoint ParseEndPoint(string value, int port = 0)
+		public static IPEndPoint Parse(string address)
 		{
-			if (String.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
+			if (String.IsNullOrEmpty(address)) throw new ArgumentNullException(nameof(address));
 
-			var index = value.LastIndexOf(':');
+			var index = address.LastIndexOf(':');
+
 			if (index == -1)
-			{
-				if (port < 1)
-					throw new ArgumentException($"Invalid endpoint '{value}' - host:port is expected", nameof(value));
-			}
-			else if (!Int32.TryParse(value.Substring(index + 1), out port))
-			{
-				throw new ArgumentException("Cannot parse " + value, nameof(value));
-			}
+				return New(address, Protocol.DefaultPort);
 
-			var hostName = index == -1 ? value : value.Remove(index);
+			if (index == 0)
+				throw new ArgumentException($"Invalid endpoint '{address}' - host:port is expected", nameof(address));
+
+			if (!Int32.TryParse(address.Substring(index + 1), out var port))
+				throw new ArgumentException($"Invalid port number in '{address}'", nameof(address));
+
+			return New(address.Remove(index), port);
+		}
+
+		public static IPEndPoint New(string hostName, int port)
+		{
+			if (String.IsNullOrEmpty(hostName)) throw new ArgumentNullException(nameof(hostName));
+			if (port < 1) throw new ArgumentOutOfRangeException(nameof(port), port, $"Invalid port '{port}'");
+
 			static bool IsIPV4(IPAddress a) => a.AddressFamily == AddressFamily.InterNetwork;
 
 			if (!IPAddress.TryParse(hostName, out var address))
@@ -35,7 +42,7 @@ namespace Enyim.Caching.Memcached
 			{
 				// TODO test ipv6
 				if (!IsIPV4(address))
-					throw new ArgumentException("Expected IPV4 adress but received " + value);
+					throw new ArgumentException("Expected IPV4 adress but received " + hostName);
 			}
 
 			return new IPEndPoint(address, port);

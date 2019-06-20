@@ -46,7 +46,7 @@ namespace Enyim.Caching.Memcached
 			=> (value ?? throw new ArgumentNullException(nameof(value)))
 					.Where(v => !String.IsNullOrEmpty(v))
 					.Select(v => EndPointHelper
-									.ParseEndPoint(v.Trim(), Protocol.DefaultPort));
+									.New(v.Trim(), Protocol.DefaultPort));
 	}
 }
 
