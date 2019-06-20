@@ -247,6 +247,12 @@ namespace Enyim.Caching
 			}
 			catch (Exception e)
 			{
+				if (shutdownToken.IsCancellationRequested)
+				{
+					logger.Error(e, "Error occured, but cluster was shut down during reconnect, so ignoring it");
+					return;
+				}
+
 				logger.Error(e, "Failed to reconnect {node}, rescheduling", node);
 
 				// TODO this can lead to inifinite loops
@@ -301,47 +307,45 @@ namespace Enyim.Caching
 
 		public void Dispose()
 		{
+			if (IsDisposed) return;
+
+			shutdownToken.Cancel();
+			workerIsDone.Wait();
+
+			// if the cluster is not stopped yet, we should clean up
 			lock (StateLock)
 			{
-				// if the cluster is not stopped yet, we should clean up
-				if (!IsDisposed)
+				// ??
+				if (IsDisposed) return;
+
+				IsDisposed = true;
+				Debug.Assert(allNodes != null);
+				Debug.Assert(workingNodes != null);
+
+				try
 				{
-					Debug.Assert(allNodes != null);
-					Debug.Assert(workingNodes != null);
+					Disposing(true);
 
-					try
+					using (shutdownToken)
+					using (ioQueue)
+					using (workerIsDone)
 					{
-						Disposing(true);
-
-						using (shutdownToken)
-						using (ioQueue)
+						foreach (var node in allNodes)
 						{
-							shutdownToken.Cancel();
-							using (workerIsDone) workerIsDone.Wait();
-
-							foreach (var node in allNodes)
+							try { node.Shutdown(); }
+							catch (Exception e)
 							{
-								try { node.Shutdown(); }
-								catch (Exception e)
-								{
-									logger.Error(e, "Error while shutting down node {node}", node);
-								}
+								logger.Error(e, "Error while shutting down node {node}", node);
 							}
-
-							Array.Clear(allNodes, 0, allNodes.Length);
-							Array.Clear(workingNodes, 0, workingNodes.Length);
 						}
 
-						//SocketAsyncEventArgsFactory.Instance.Compact();
+						Array.Clear(allNodes, 0, allNodes.Length);
+						Array.Clear(workingNodes, 0, workingNodes.Length);
 					}
-					catch (Exception e)
-					{
-						logger.Warning(e, "Error while disposing cluster {cluster}", "{" + String.Join(", ", endpoints.Select(e => e.ToString())) + "}");
-					}
-					finally
-					{
-						IsDisposed = true;
-					}
+				}
+				catch (Exception e)
+				{
+					logger.Warning(e, "Error while disposing cluster {cluster}", "{" + String.Join(", ", endpoints.Select(e => e.ToString())) + "}");
 				}
 			}
 		}
