@@ -54,11 +54,11 @@ namespace Enyim.Caching
 
 		private IMemoryOwner<byte> responseMemory;
 		private SocketAsyncEventArgs? responseArgs;
-		private readonly ReadBuffer responseBuffer;
+		private ReadBuffer? responseBuffer;
 
 		private IMemoryOwner<byte> requestMemory;
 		private SocketAsyncEventArgs? requestArgs;
-		private readonly WriteBuffer requestBuffer;
+		private WriteBuffer? requestBuffer;
 
 		internal protected AsyncSocket(MemoryPool<byte> pool)
 		{
@@ -72,10 +72,7 @@ namespace Enyim.Caching
 			ResponseBufferSize = Defaults.ReceiveBufferSize;
 
 			responseMemory = OwnedMemory<byte>.Empty;
-			responseBuffer = new ReadBuffer();
-
 			requestMemory = OwnedMemory<byte>.Empty;
-			requestBuffer = new WriteBuffer();
 
 			this.pool = pool;
 		}
@@ -137,26 +134,29 @@ namespace Enyim.Caching
 
 		private void InitBuffers()
 		{
-			if (requestMemory.Memory.IsEmpty)
+			if (requestBuffer == null)
 			{
 				// allocate the the buffers
 				requestMemory = pool.RentExact(RequestBufferSize);
 				responseMemory = pool.RentExact(ResponseBufferSize);
 
+				requestBuffer = new WriteBuffer(requestMemory.Memory);
+				responseBuffer = new ReadBuffer(responseMemory.Memory);
+
 				// setup the outgoing channel
 				requestArgs = new SocketAsyncEventArgs();
 				requestArgs.Completed += RequestSent;
 				requestArgs.SetBuffer(requestMemory.Memory);
-				requestBuffer.Initialize(requestMemory.Memory);
 
 				// setup the incoming channel
 				responseArgs = new SocketAsyncEventArgs();
 				responseArgs.Completed += ResponseReceived;
 				responseArgs.SetBuffer(responseMemory.Memory);
-				responseBuffer.Initialize(responseMemory.Memory);
 			}
 			else
 			{
+				Debug.Assert(responseBuffer != null);
+
 				requestBuffer.Restart();
 				responseBuffer.SetDataAvailable(0);
 			}
@@ -181,6 +181,7 @@ namespace Enyim.Caching
 		public bool SendRequest(Action<bool> whenDone)
 		{
 			Debug.Assert(requestArgs != null);
+			Debug.Assert(requestBuffer != null);
 
 			AsyncSocketEventSource.SendStart(name, IsAlive, requestBuffer.Position);
 
@@ -206,6 +207,7 @@ namespace Enyim.Caching
 		private void PerformSend(Memory<byte> data)
 		{
 			Debug.Assert(requestArgs != null);
+			Debug.Assert(requestBuffer != null);
 			Debug.Assert(socket != null);
 
 			for (; ; )
@@ -246,6 +248,7 @@ namespace Enyim.Caching
 		private void RequestSent(object sender, SocketAsyncEventArgs e)
 		{
 			Debug.Assert(requestArgs != null);
+			Debug.Assert(requestBuffer != null);
 
 			var sent = requestArgs.BytesTransferred;
 			AsyncSocketEventSource.SendChunk(name, IsAlive, sent, requestArgs.SocketError);
@@ -314,6 +317,8 @@ namespace Enyim.Caching
 
 		private void ResponseReceived(object sender, SocketAsyncEventArgs recvArgs)
 		{
+			Debug.Assert(responseBuffer != null);
+
 			var received = recvArgs.BytesTransferred;
 			AsyncSocketEventSource.ReceiveChunk(name, IsAlive, received, recvArgs.SocketError);
 
@@ -338,8 +343,8 @@ namespace Enyim.Caching
 
 		public bool IsReceiving => Volatile.Read(ref isReceiving) == 1;
 		public bool IsSending => Volatile.Read(ref isSending) == 1;
-		public ReadBuffer ResponseBuffer => responseBuffer;
-		public WriteBuffer RequestBuffer => requestBuffer;
+		public ReadBuffer ResponseBuffer => responseBuffer ?? throw new InvalidOperationException($"{nameof(ResponseBuffer)} cannot be accessed until the socket is connected");
+		public WriteBuffer RequestBuffer => requestBuffer ?? throw new InvalidOperationException($"{nameof(RequestBuffer)} cannot be accessed until the socket is connected");
 
 		private void ThrowIfConnected()
 		{

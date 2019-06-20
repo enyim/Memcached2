@@ -10,9 +10,7 @@ namespace Enyim.Caching
 		private int position;
 		private int remaining;
 
-		internal WriteBuffer() { }
-
-		internal void Initialize(in Memory<byte> buffer)
+		public WriteBuffer(in Memory<byte> buffer)
 		{
 			this.buffer = buffer;
 			Restart();
@@ -25,6 +23,12 @@ namespace Enyim.Caching
 		/// The current position in the buffer
 		/// </summary>
 		public int Position => position;
+
+		public void Restart()
+		{
+			position = 0;
+			remaining = buffer.Length;
+		}
 
 		// returns the amount appended
 		public int TryAppend(in ReadOnlySpan<byte> data)
@@ -70,12 +74,6 @@ namespace Enyim.Caching
 
 			Debug.Assert(position <= buffer.Length);
 			Debug.Assert(remaining >= 0);
-		}
-
-		internal void Restart()
-		{
-			position = 0;
-			remaining = buffer.Length;
 		}
 	}
 }

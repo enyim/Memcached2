@@ -10,9 +10,7 @@ namespace Enyim.Caching
 		private int remaining;
 		private int position;
 
-		internal ReadBuffer() { }
-
-		internal void Initialize(in ReadOnlyMemory<byte> buffer)
+		public ReadBuffer(in ReadOnlyMemory<byte> buffer)
 		{
 			this.buffer = buffer;
 			remaining = 0;

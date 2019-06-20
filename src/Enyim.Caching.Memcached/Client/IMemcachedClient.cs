@@ -21,7 +21,7 @@ namespace Enyim.Caching.Memcached
 		Task<OperationResult> ConcatWithResultAsync(ConcatenationMode mode, string key, ReadOnlyMemory<byte> data, ulong cas = Protocol.NO_CAS);
 		Task<OperationResult> TouchWithResultAsync(string key, Expiration expiration = default);
 
-		Task<MemcachedStats> StatsAsync(string type);
+		Task<MemcachedStats> StatsAsync(string? type);
 		Task<bool> FlushAll(Expiration when = default);
 	}
 }

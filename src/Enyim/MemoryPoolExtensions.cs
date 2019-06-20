@@ -15,17 +15,17 @@ namespace Enyim
 			var retval = pool.Rent(size);
 			if (retval.Memory.Length > size)
 			{
-				return new Wrapper<T>(retval, size);
+				return new ProxyOwner<T>(retval, size);
 			}
 
 			return retval;
 		}
 
-		private class Wrapper<T> : IMemoryOwner<T>
+		private class ProxyOwner<T> : IMemoryOwner<T>
 		{
 			private IMemoryOwner<T> original;
 
-			public Wrapper(IMemoryOwner<T> original, int size)
+			public ProxyOwner(IMemoryOwner<T> original, int size)
 			{
 				this.original = original;
 				Memory = original.Memory.Slice(0, size);
@@ -35,13 +35,9 @@ namespace Enyim
 
 			public void Dispose()
 			{
-				var tmp = original;
-				if (tmp != null)
-				{
-					tmp.Dispose();
-					Memory = Memory<T>.Empty;
-					original = OwnedMemory<T>.Empty;
-				}
+				original?.Dispose();
+				Memory = Memory<T>.Empty;
+				original = OwnedMemory<T>.Empty;
 			}
 		}
 	}

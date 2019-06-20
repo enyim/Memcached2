@@ -77,7 +77,7 @@ namespace Enyim.Caching
 		protected virtual void OnStarting() { }
 		protected virtual void OnStarted() { }
 
-		Task ICluster.Execute(IItemOperation op)
+		public Task Execute(IItemOperation op)
 		{
 			var node = locator.Locate(op.Key.Span);
 
@@ -90,7 +90,7 @@ namespace Enyim.Caching
 			return retval;
 		}
 
-		Task<IOperation>[] ICluster.Broadcast<TState>(Func<INode, TState, IOperation> createOp, TState state)
+		public Task<IOperation>[] Broadcast<TState>(Func<INode, TState, IOperation> createOp, TState state)
 		{
 			Debug.Assert(workingNodes != null);
 

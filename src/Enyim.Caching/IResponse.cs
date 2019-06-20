@@ -4,7 +4,11 @@ namespace Enyim.Caching
 {
 	public interface IResponse : IDisposable
 	{
-		// returns true if further IO is required
+		/// <summary>
+		/// returns true if further IO is required
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <returns></returns>
 		bool Read(ReadBuffer stream);
 	}
 }
