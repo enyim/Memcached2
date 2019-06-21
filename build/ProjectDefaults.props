@@ -11,6 +11,7 @@
 
     <!-- will be set to true at individual projects -->
     <IsPackable>false</IsPackable>
+    <NoWarn>NU5105</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
