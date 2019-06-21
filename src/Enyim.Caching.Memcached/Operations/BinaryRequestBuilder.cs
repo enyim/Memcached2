@@ -118,8 +118,8 @@ namespace Enyim.Caching.Memcached.Operations
 #if DEBUG
 			if (whatDidYouDo >= DID_BODY) throw new InvalidOperationException("body can only be accessed once");
 			whatDidYouDo = DID_BODY;
-			Debug.Assert(bodyBuilder != null);
 #endif
+			Debug.Assert(bodyBuilder != null);
 
 			return bodyBuilder;
 		}

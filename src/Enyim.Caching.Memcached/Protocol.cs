@@ -75,6 +75,7 @@ namespace Enyim.Caching.Memcached
 			SilentOps = new bool[values.Values.Max() + 1];
 			NormalToSilent = new OpCode[SilentOps.Length];
 
+#pragma warning disable CS8619
 			foreach (var (name, op) in values)
 			{
 				SilentOps[op] = name.EndsWith("Q");
@@ -82,6 +83,7 @@ namespace Enyim.Caching.Memcached
 										? silent
 										: op);
 			}
+#pragma warning enable CS8619
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
