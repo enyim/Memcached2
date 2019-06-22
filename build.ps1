@@ -1,50 +1,44 @@
-﻿param ( [string] $Version, [string] $Prerelease, [string] $Branch, [string] $Configuration = "Release", [string] $CustomMetadata, [string] $OutputPath = "out" )
+﻿[CmdletBinding()]
+param(
+    [Parameter(Position = 0, Mandatory = $false)]
+    [string[]]$Tasks = @(),
 
-function concat ($separator, $list) { ($list | Where-Object { !!$_}) -join $separator }
+    [Parameter(Position = 1, Mandatory = $false)]
+    [System.Collections.Hashtable]$Parameters = @{ },
 
-function Get-CIValue($names) {
-  $names `
-  | ForEach-Object { Get-ChildItem "env:$_" -ErrorAction SilentlyContinue } `
-  | Select-Object -First 1 -ExpandProperty value
-}
+    [Parameter(Position = 2, Mandatory = $false)]
+    [System.Collections.Hashtable]$Properties = @{ },
 
-$root = split-path -parent $MyInvocation.MyCommand.Path
-Push-Location $root
+    [switch]$Help = $false
+)
+
+Push-Location $PSScriptRoot -StackName build
 
 try {
-
-    # cleanup
-    #
-    Get-ChildItem -Recurse bin -Directory | Remove-Item -recurse -ErrorAction SilentlyContinue
-    Get-ChildItem -Recurse obj -Directory | Remove-Item -recurse -ErrorAction SilentlyContinue
-
-    $OutputPath = Join-Path $root $OutputPath
-    if (Test-Path $OutputPath) { Remove-Item $OutputPath -Recurse -ErrorAction SilentlyContinue }
-
-    # set up build metadata
-    #
-    if (!$Version) { $Version = Get-CIValue "BUILD_NUMBER", "APPVEYOR_BUILD_VERSION" }
-    if (!$Version) { $Version = get-content VERSION }
-    if (!$Branch) { $Branch = Get-CIValue "APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH", "APPVEYOR_REPO_BRANCH" }
-
-    $LongHash = Get-CIValue "STANDARD_CI_SOURCE_REVISION_ID", "BUILD_VCS_NUMBER", "APPVEYOR_PULL_REQUEST_HEAD_COMMIT", "APPVEYOR_REPO_COMMIT"
-
-    if (!$LongHash -and (get-command "git")) {
-      $ShortHash = (git log --pretty=format:%h -1)
-      $LongHash = (git log --pretty=format:%H -1)
-      if (!$Branch) { $Branch = (git rev-parse --abbrev-ref HEAD) -replace "/", "-" }
-    }
     
-    if (!$ShortHash) { $ShortHash = $LongHash }
+    Import-Module ./build/buildhelpers.psm1
+    bootstrap "psake"
 
-    $FullVersion = concat "+" (concat "-" $Version, $Prerelease), (concat "." $Branch, $ShortHash, $CustomMetadata)
+    Import-Module psake -Verbose:$false -ErrorAction Stop
 
-    # produce nuget packages
-    write-host "dotnet pack Enyim.Memcached.sln -c $Configuration -v m /p:version=$FullVersion /p:ContinuousIntegrationBuild=true -o $OutputPath" /p:STANDARD_CI_SOURCE_REVISION_ID=$LongHash
+    $Preferences = @{
+        Verbose        = $VerbosePreference -eq "Continue"
+        Debug          = $DebugPreference -eq "Continue"
+        nologo         = $true
+        docs           = $Help
+        parameters     = $Parameters
+        properties     = $Properties
+        taskList       = $Tasks | ForEach-Object { (Get-Culture).TextInfo.ToTitleCase($_) }
+        initialization = { Set-Location $PSScriptRoot }
+    }
 
+    Invoke-psake -buildFile ./build/buildtasks.ps1 @Preferences
 }
 finally {
-    Pop-Location
+    Remove-Module buildhelpers -Force -ErrorAction SilentlyContinue
+    Remove-Module psake -Force -ErrorAction SilentlyContinue
+
+    Pop-Location -StackName build
 }
 
 <#
