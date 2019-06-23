@@ -67,7 +67,7 @@ namespace Enyim.Caching
 		public bool IsAlive
 		{
 			get => Volatile.Read(ref isAlive);
-			private set => Volatile.Write(ref isAlive, value);
+			protected set => Volatile.Write(ref isAlive, value);
 		}
 
 		public virtual void Connect(CancellationToken token)
