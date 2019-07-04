@@ -8,7 +8,7 @@ namespace Enyim.Caching.Memcached
 		private readonly ITranscoder transcoder;
 		private readonly ICluster cluster;
 		private readonly IKeyTransformer keyTransformer;
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 
 		public MemcachedClient(ICluster cluster, IMemcachedClientOptions? options = null)
 		{
@@ -17,7 +17,7 @@ namespace Enyim.Caching.Memcached
 			this.cluster = cluster ?? throw new ArgumentNullException(nameof(cluster));
 			if (!cluster.IsStarted) throw new ArgumentException("Cluster must be started before creating client instances", nameof(cluster));
 
-			pool = options.Allocator ?? throw PropertyCannotBeNull(nameof(options.Allocator));
+			allocator = options.Allocator ?? throw PropertyCannotBeNull(nameof(options.Allocator));
 			keyTransformer = options.KeyTransformer ?? throw PropertyCannotBeNull(nameof(options.KeyTransformer));
 			transcoder = options.Transcoder ?? throw PropertyCannotBeNull(nameof(options.Transcoder));
 		}

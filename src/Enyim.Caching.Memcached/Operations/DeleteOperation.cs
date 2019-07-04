@@ -5,7 +5,7 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class DeleteOperation : BinaryItemOperation, ICanBeSilent
 	{
-		public DeleteOperation(MemoryPool<byte> pool, in ReadOnlyMemory<byte> key) : base(pool, key) { }
+		public DeleteOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key) : base(allocator, key) { }
 
 		public bool Silent { get; set; }
 
@@ -20,7 +20,7 @@ namespace Enyim.Caching.Memcached.Operations
 		*/
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(Pool, Silent ? OpCode.DeleteQ : OpCode.Delete)
+			using var builder = new BinaryRequestBuilder(Allocator, Silent ? OpCode.DeleteQ : OpCode.Delete)
 			{
 				Cas = Cas
 			};

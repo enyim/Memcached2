@@ -6,7 +6,7 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class TouchOperation : BinaryItemOperation
 	{
-		public TouchOperation(MemoryPool<byte> pool, in ReadOnlyMemory<byte> key) : base(pool, key) { }
+		public TouchOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key) : base(allocator, key) { }
 
 		public Expiration Expiration { get; set; }
 
@@ -32,7 +32,7 @@ namespace Enyim.Caching.Memcached.Operations
 		*/
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(Pool, OpCode.Touch, 4)
+			using var builder = new BinaryRequestBuilder(Allocator, OpCode.Touch, 4)
 			{
 				Cas = Cas
 			};

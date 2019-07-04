@@ -10,7 +10,7 @@ namespace Enyim.Caching.Memcached
 		{
 			using var realKey = keyTransformer.Transform(key);
 
-			var op = new Operations.GetOperation(pool, realKey.Memory)
+			var op = new Operations.GetOperation(allocator, realKey.Memory)
 			{
 				Cas = cas,
 				Silent = silent
@@ -26,7 +26,7 @@ namespace Enyim.Caching.Memcached
 		{
 			using var realKey = keyTransformer.Transform(key);
 
-			var op = new Operations.GetAndTouchOperation(pool, realKey.Memory)
+			var op = new Operations.GetAndTouchOperation(allocator, realKey.Memory)
 			{
 				Cas = cas,
 				Silent = silent

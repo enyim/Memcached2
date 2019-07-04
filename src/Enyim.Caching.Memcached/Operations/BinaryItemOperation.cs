@@ -5,13 +5,13 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal abstract class BinaryItemOperation : MemcachedOperationBase, IItemOperation
 	{
-		protected BinaryItemOperation(MemoryPool<byte> pool, in ReadOnlyMemory<byte> key)
+		protected BinaryItemOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key)
 		{
-			Pool = pool;
+			Allocator = allocator;
 			Key = key;
 		}
 
-		protected MemoryPool<byte> Pool { get; }
+		protected MemoryPool<byte> Allocator { get; }
 		public ReadOnlyMemory<byte> Key { get; }
 	}
 }

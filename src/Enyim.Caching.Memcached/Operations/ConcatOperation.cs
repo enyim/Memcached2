@@ -5,8 +5,8 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class ConcatOperation : BinaryItemOperation, ICanBeSilent
 	{
-		public ConcatOperation(MemoryPool<byte> pool, in ReadOnlyMemory<byte> key, ConcatenationMode mode, in ReadOnlyMemory<byte> data)
-			: base(pool, key)
+		public ConcatOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key, ConcatenationMode mode, in ReadOnlyMemory<byte> data)
+			: base(allocator, key)
 		{
 			Mode = mode;
 			Data = data;
@@ -28,7 +28,7 @@ namespace Enyim.Caching.Memcached.Operations
 		*/
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(Pool, Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode)
+			using var builder = new BinaryRequestBuilder(Allocator, Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode)
 			{
 				Cas = Cas
 			};

@@ -10,9 +10,9 @@ namespace Enyim
 		public static ReadOnlyMemory<T> Take<T>(this in ReadOnlyMemory<T> memory, int length) => memory.Slice(0, length);
 		public static Memory<T> Take<T>(this in Memory<T> memory, int length) => memory.Slice(0, length);
 
-		public static IMemoryOwner<T> RentExact<T>(this MemoryPool<T> pool, int size)
+		public static IMemoryOwner<T> RentExact<T>(this MemoryPool<T> memoryPool, int size)
 		{
-			var retval = pool.Rent(size);
+			var retval = memoryPool.Rent(size);
 			if (retval.Memory.Length > size)
 			{
 				return new ProxyOwner<T>(retval, size);

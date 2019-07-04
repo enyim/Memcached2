@@ -36,7 +36,7 @@ namespace Enyim.Caching
 		*/
 		#endregion
 
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 		private int segmentSize;
 
 		private int length;
@@ -45,9 +45,9 @@ namespace Enyim.Caching
 		private bool done;
 		private bool disposed;
 
-		public SequenceBuilder(MemoryPool<byte> pool, int minimumSegmentSize = 32)
+		public SequenceBuilder(MemoryPool<byte> allocator, int minimumSegmentSize = 32)
 		{
-			this.pool = pool;
+			this.allocator = allocator;
 			segmentSize = minimumSegmentSize;
 		}
 
@@ -62,7 +62,7 @@ namespace Enyim.Caching
 			if (current == null || current.WritableBytes < count)
 			{
 				var newSegment = new _Segment();
-				newSegment.SetMemory(pool.Rent(CalcSegmentSize(count)));
+				newSegment.SetMemory(allocator.Rent(CalcSegmentSize(count)));
 
 				current?.SetNext(newSegment);
 				current = newSegment;
@@ -82,7 +82,7 @@ namespace Enyim.Caching
 			requested = Math.Max(segmentSize, requested);
 			segmentSize = (int)(segmentSize * 1.5);
 
-			return Math.Min(pool.MaxBufferSize, requested);
+			return Math.Min(allocator.MaxBufferSize, requested);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -6,11 +6,11 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class FlushOperation : MemcachedOperationBase
 	{
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 
-		public FlushOperation(MemoryPool<byte> pool)
+		public FlushOperation(MemoryPool<byte> allocator)
 		{
-			this.pool = pool;
+			this.allocator = allocator;
 		}
 
 		public Expiration When { get; set; }
@@ -34,7 +34,7 @@ namespace Enyim.Caching.Memcached.Operations
 		*/
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(pool, OpCode.Flush, When.IsNever ? (byte)0 : (byte)4);
+			using var builder = new BinaryRequestBuilder(allocator, OpCode.Flush, When.IsNever ? (byte)0 : (byte)4);
 
 			if (!When.IsNever)
 			{

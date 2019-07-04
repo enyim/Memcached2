@@ -6,7 +6,7 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class GetOperation : BinaryItemOperation, ICanBeSilent
 	{
-		public GetOperation(MemoryPool<byte> pool, in ReadOnlyMemory<byte> key) : base(pool, key) { }
+		public GetOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key) : base(allocator, key) { }
 
 		public bool Silent { get; set; }
 
@@ -24,7 +24,7 @@ namespace Enyim.Caching.Memcached.Operations
 		*/
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(Pool, Silent ? OpCode.GetQ : OpCode.Get)
+			using var builder = new BinaryRequestBuilder(Allocator, Silent ? OpCode.GetQ : OpCode.Get)
 			{
 				Cas = Cas
 			};

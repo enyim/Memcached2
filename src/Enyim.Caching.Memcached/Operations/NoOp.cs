@@ -6,16 +6,16 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class NoOp : MemcachedOperationBase
 	{
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 
-		public NoOp(MemoryPool<byte> pool)
+		public NoOp(MemoryPool<byte> allocator)
 		{
-			this.pool = pool;
+			this.allocator = allocator;
 		}
 
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(pool, OpCode.NoOp);
+			using var builder = new BinaryRequestBuilder(allocator, OpCode.NoOp);
 
 			return builder.Build();
 		}

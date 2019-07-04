@@ -8,13 +8,13 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class StatsOperation : MemcachedOperationBase
 	{
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 		private readonly string? type;
 		private Dictionary<string, string>? stats;
 
-		public StatsOperation(MemoryPool<byte> pool, string? type = null)
+		public StatsOperation(MemoryPool<byte> allocator, string? type = null)
 		{
-			this.pool = pool;
+			this.allocator = allocator;
 			this.type = type;
 		}
 
@@ -22,11 +22,11 @@ namespace Enyim.Caching.Memcached.Operations
 
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(pool, OpCode.Stat);
+			using var builder = new BinaryRequestBuilder(allocator, OpCode.Stat);
 
 			if (!String.IsNullOrEmpty(type))
 			{
-				using var data = pool.Rent(type.Length);
+				using var data = allocator.Rent(type.Length);
 				var span = data.Memory.Span;
 				var count = Encoding.ASCII.GetBytes(type.AsSpan(), span);
 

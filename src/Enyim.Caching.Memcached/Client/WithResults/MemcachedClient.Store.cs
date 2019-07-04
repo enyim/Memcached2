@@ -10,7 +10,7 @@ namespace Enyim.Caching.Memcached
 		{
 			try
 			{
-				using var sb = new SequenceBuilder(pool);
+				using var sb = new SequenceBuilder(allocator);
 
 				var flags = transcoder.Serialize(sb, value);
 				var op = await PerformStore(mode, key, flags, sb, cas, expiration, silent: false).ConfigureAwait(false);

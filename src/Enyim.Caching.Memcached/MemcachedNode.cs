@@ -16,14 +16,14 @@ namespace Enyim.Caching.Memcached
 
 		private const int SilentCountThreshold = 50;
 
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 		private int silentCount;
 		private bool lastWasSilent;
 
-		public MemcachedNode(MemoryPool<byte> pool, ICluster owner, IPEndPoint endpoint, ISocket socket, IFailurePolicyFactory failurePolicyFactory)
+		public MemcachedNode(MemoryPool<byte> allocator, ICluster owner, IPEndPoint endpoint, ISocket socket, IFailurePolicyFactory failurePolicyFactory)
 			: base(owner, endpoint, socket, failurePolicyFactory)
 		{
-			this.pool = pool;
+			this.allocator = allocator;
 		}
 
 		public override void Connect(CancellationToken token)
@@ -35,7 +35,7 @@ namespace Enyim.Caching.Memcached
 
 		protected override IResponse CreateResponse()
 		{
-			return new Operations.BinaryResponse(pool);
+			return new Operations.BinaryResponse(allocator);
 		}
 
 		public override Task<IOperation> Enqueue(IOperation op)
@@ -61,7 +61,7 @@ namespace Enyim.Caching.Memcached
 					silentCount = 0;
 					logger.Trace("Node {node} has reached silent op count threshold {threshold}, injecting a NoOp", this, SilentCountThreshold);
 
-					base.Enqueue(new Operations.NoOp(pool));
+					base.Enqueue(new Operations.NoOp(allocator));
 				}
 			}
 		}
@@ -90,7 +90,7 @@ namespace Enyim.Caching.Memcached
 			{
 				lastWasSilent = false;
 
-				return new OpQueueEntry(new Operations.NoOp(pool), new TaskCompletionSource<IOperation>(TaskCreationOptions.RunContinuationsAsynchronously));
+				return new OpQueueEntry(new Operations.NoOp(allocator), new TaskCompletionSource<IOperation>(TaskCreationOptions.RunContinuationsAsynchronously));
 			}
 
 			return data;

@@ -10,7 +10,7 @@ namespace Enyim.Caching.Memcached
 		{
 			using var realKey = keyTransformer.Transform(key);
 
-			var op = new Operations.ConcatOperation(pool, realKey.Memory, mode, data)
+			var op = new Operations.ConcatOperation(allocator, realKey.Memory, mode, data)
 			{
 				Cas = cas,
 				Silent = silent

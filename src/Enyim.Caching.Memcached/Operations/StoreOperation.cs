@@ -9,8 +9,8 @@ namespace Enyim.Caching.Memcached.Operations
 		private readonly uint flags;
 		private SequenceBuilder? value;
 
-		public StoreOperation(MemoryPool<byte> pool, in ReadOnlyMemory<byte> key, StoreMode mode, uint flags, SequenceBuilder value)
-			: base(pool, key)
+		public StoreOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key, StoreMode mode, uint flags, SequenceBuilder value)
+			: base(allocator, key)
 		{
 			Mode = mode;
 			this.flags = flags;
@@ -44,7 +44,7 @@ namespace Enyim.Caching.Memcached.Operations
 		*/
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(Pool, Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode, 8)
+			using var builder = new BinaryRequestBuilder(Allocator, Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode, 8)
 			{
 				Cas = Cas
 			};

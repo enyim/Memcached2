@@ -9,17 +9,17 @@ namespace Enyim.Caching.Memcached
 {
 	public sealed class AsciiKeyTransformer : IKeyTransformer
 	{
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 
-		public AsciiKeyTransformer(MemoryPool<byte> pool)
+		public AsciiKeyTransformer(MemoryPool<byte> allocator)
 		{
-			this.pool = pool ?? throw new ArgumentNullException(nameof(pool));
+			this.allocator = allocator ?? throw new ArgumentNullException(nameof(allocator));
 		}
 
 		public IMemoryOwner<byte> Transform(string key)
 		{
 			var keyLength = Encoding.ASCII.GetByteCount(key);
-			var retval = pool.RentExact(keyLength); // DO NOT DISPOSE!
+			var retval = allocator.RentExact(keyLength); // DO NOT DISPOSE!
 			var count = Encoding.ASCII.GetBytes(key, retval.Memory.Span);
 			Debug.Assert(count == keyLength);
 

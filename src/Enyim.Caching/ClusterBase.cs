@@ -265,7 +265,7 @@ namespace Enyim.Caching
 		/// Mark the specified node as working.
 		/// </summary>
 		/// <param name="node"></param>
-		/// <remarks>Can be called from a background thread (Task pool)</remarks>
+		/// <remarks>Can be called from a background thread (Task Pool)</remarks>
 		protected void ReAddNode(INode node)
 		{
 			logger.Information("Node {node} was reconnected", node);

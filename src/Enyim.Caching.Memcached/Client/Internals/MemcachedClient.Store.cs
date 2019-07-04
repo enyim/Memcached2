@@ -13,7 +13,7 @@ namespace Enyim.Caching.Memcached
 		{
 			using var realKey = keyTransformer.Transform(key);
 
-			var op = new Operations.StoreOperation(pool, realKey.Memory, mode, flags, value)
+			var op = new Operations.StoreOperation(allocator, realKey.Memory, mode, flags, value)
 			{
 				Expiration = expiration,
 				Cas = cas,

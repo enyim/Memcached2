@@ -10,7 +10,7 @@ namespace Enyim.Caching.Memcached
 		{
 			using var realKey = keyTransformer.Transform(key);
 
-			var op = new Operations.DeleteOperation(pool, realKey.Memory)
+			var op = new Operations.DeleteOperation(allocator, realKey.Memory)
 			{
 				Cas = cas,
 				Silent = silent

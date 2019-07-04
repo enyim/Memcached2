@@ -13,7 +13,7 @@ namespace Enyim.Caching.Memcached.Operations
 		private const int STATE_READ_BODY = 2;
 		private const int STATE_DONE = 3;
 
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 		private int state;
 		private int dataReadOffset;
 
@@ -28,9 +28,9 @@ namespace Enyim.Caching.Memcached.Operations
 
 		private string? responseMessage;
 
-		internal BinaryResponse(MemoryPool<byte> pool)
+		internal BinaryResponse(MemoryPool<byte> allocator)
 		{
-			this.pool = pool;
+			this.allocator = allocator;
 			StatusCode = -1;
 		}
 
@@ -152,7 +152,7 @@ namespace Enyim.Caching.Memcached.Operations
 			{
 				case STATE_INIT:
 
-					headerOwned = pool.Rent(Protocol.HeaderLength);
+					headerOwned = allocator.Rent(Protocol.HeaderLength);
 					// make it exactly HeaderLength long for bound checks
 					header = headerOwned.Memory.Take(Protocol.HeaderLength);
 
@@ -287,7 +287,7 @@ namespace Enyim.Caching.Memcached.Operations
 				//     keyBuffer      |
 				//             |______|
 				//               valueBuffer
-				bodyOwned = pool.Rent(bodyLength);
+				bodyOwned = allocator.Rent(bodyLength);
 
 				body = bodyOwned.Memory.Take(bodyLength);
 				extraBuffer = body.Take(extraLength);

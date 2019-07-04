@@ -11,12 +11,12 @@ namespace Enyim.Caching.Memcached
 	{
 		private static readonly UTF8Encoding utf8 = new UTF8Encoding(false);
 
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 		private readonly Memory<byte> prefix;
 
-		public NamespacingKeyTransformer(MemoryPool<byte> pool, string @namespace)
+		public NamespacingKeyTransformer(MemoryPool<byte> allocator, string @namespace)
 		{
-			this.pool = pool ?? throw new ArgumentNullException(nameof(pool));
+			this.allocator = allocator ?? throw new ArgumentNullException(nameof(allocator));
 
 			prefix = utf8.GetBytes(@namespace ?? throw new ArgumentNullException(nameof(@namespace))).AsMemory();
 		}
@@ -24,7 +24,7 @@ namespace Enyim.Caching.Memcached
 		public IMemoryOwner<byte> Transform(string key)
 		{
 			var keyLength = utf8.GetByteCount(key);
-			var retval = pool.RentExact(prefix.Length + keyLength); // DO NOT DISPOSE!
+			var retval = allocator.RentExact(prefix.Length + keyLength); // DO NOT DISPOSE!
 
 			var ptr = retval.Memory.Span;
 

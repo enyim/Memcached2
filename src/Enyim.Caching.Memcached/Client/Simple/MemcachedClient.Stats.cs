@@ -14,11 +14,11 @@ namespace Enyim.Caching.Memcached
 			var ops = new List<(INode node, Operations.StatsOperation op)>();
 			var tasks = cluster.Broadcast((node, state) =>
 			{
-				var retval = new Operations.StatsOperation(state.pool, state.type);
+				var retval = new Operations.StatsOperation(state.allocator, state.type);
 				state.ops.Add((node, retval));
 
 				return retval;
-			}, (pool, type, ops));
+			}, (allocator, type, ops));
 
 			var successful = (await WhenAllUnfailed(tasks).ConfigureAwait(false)).ToHashSet();
 			var retval = new MemcachedStats();

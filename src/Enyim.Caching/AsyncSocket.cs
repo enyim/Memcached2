@@ -50,7 +50,7 @@ namespace Enyim.Caching
 		private int isReceiving;
 		private int isSending;
 
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 
 		private IMemoryOwner<byte> responseMemory;
 		private SocketAsyncEventArgs? responseArgs;
@@ -60,7 +60,7 @@ namespace Enyim.Caching
 		private SocketAsyncEventArgs? requestArgs;
 		private WriteBuffer? requestBuffer;
 
-		internal protected AsyncSocket(MemoryPool<byte> pool)
+		internal protected AsyncSocket(MemoryPool<byte> allocator)
 		{
 			name = "";
 
@@ -74,7 +74,7 @@ namespace Enyim.Caching
 			responseMemory = OwnedMemory<byte>.Empty;
 			requestMemory = OwnedMemory<byte>.Empty;
 
-			this.pool = pool;
+			this.allocator = allocator;
 		}
 
 		public IPEndPoint EndPoint => endpoint ?? throw new InvalidOperationException("Socket is not connected to any endpoints yet");
@@ -137,8 +137,8 @@ namespace Enyim.Caching
 			if (requestBuffer == null)
 			{
 				// allocate the the buffers
-				requestMemory = pool.RentExact(RequestBufferSize);
-				responseMemory = pool.RentExact(ResponseBufferSize);
+				requestMemory = allocator.RentExact(RequestBufferSize);
+				responseMemory = allocator.RentExact(ResponseBufferSize);
 
 				requestBuffer = new WriteBuffer(requestMemory.Memory);
 				responseBuffer = new ReadBuffer(responseMemory.Memory);

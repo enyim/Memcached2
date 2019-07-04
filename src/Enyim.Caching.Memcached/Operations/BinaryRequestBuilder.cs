@@ -46,9 +46,9 @@ namespace Enyim.Caching.Memcached.Operations
 		private int whatDidYouDo;
 #endif
 
-		public BinaryRequestBuilder(MemoryPool<byte> pool, OpCode operation, byte extraLength = 0) : this(pool, (byte)operation, extraLength) { }
+		public BinaryRequestBuilder(MemoryPool<byte> allocator, OpCode operation, byte extraLength = 0) : this(allocator, (byte)operation, extraLength) { }
 
-		protected BinaryRequestBuilder(MemoryPool<byte> pool, byte operation, byte extraLength)
+		protected BinaryRequestBuilder(MemoryPool<byte> allocator, byte operation, byte extraLength)
 		{
 			Debug.Assert(extraLength < Protocol.MaxExtraLength);
 
@@ -56,7 +56,7 @@ namespace Enyim.Caching.Memcached.Operations
 
 			this.operation = operation;
 			this.extraLength = extraLength;
-			bodyBuilder = new SequenceBuilder(pool);
+			bodyBuilder = new SequenceBuilder(allocator);
 		}
 
 		public readonly uint CorrelationId;

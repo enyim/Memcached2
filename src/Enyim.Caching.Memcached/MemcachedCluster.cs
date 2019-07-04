@@ -8,7 +8,7 @@ namespace Enyim.Caching.Memcached
 {
 	public class MemcachedCluster : ClusterBase
 	{
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 		private readonly IFailurePolicyFactory failurePolicyFactory;
 		private readonly ISocketFactory socketFactory;
 
@@ -27,13 +27,13 @@ namespace Enyim.Caching.Memcached
 					options.Locator ?? throw PropertyCannotBeNull(nameof(options.Locator)),
 					options.ReconnectPolicyFactory ?? throw PropertyCannotBeNull(nameof(options.ReconnectPolicyFactory)))
 		{
-			pool = options.Allocator ?? throw PropertyCannotBeNull(nameof(options.Allocator));
+			allocator = options.Allocator ?? throw PropertyCannotBeNull(nameof(options.Allocator));
 			socketFactory = options.SocketFactory ?? throw PropertyCannotBeNull(nameof(options.SocketFactory));
 			failurePolicyFactory = options.FailurePolicyFactory ?? throw PropertyCannotBeNull(nameof(options.FailurePolicyFactory));
 		}
 
 		protected override INode CreateNode(IPEndPoint endpoint)
-			=> new MemcachedNode(pool, this, endpoint, socketFactory.Create(), failurePolicyFactory);
+			=> new MemcachedNode(allocator, this, endpoint, socketFactory.Create(), failurePolicyFactory);
 
 		private static IEnumerable<IPEndPoint> ParseEndPoints(string value)
 			=> ParseEndPoints(value.Split(new char[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries));

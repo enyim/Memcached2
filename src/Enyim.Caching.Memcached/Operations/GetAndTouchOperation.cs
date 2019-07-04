@@ -30,7 +30,7 @@ namespace Enyim.Caching.Memcached.Operations
 		*/
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(Pool, Silent ? OpCode.GATQ : OpCode.GAT, 4)
+			using var builder = new BinaryRequestBuilder(Allocator, Silent ? OpCode.GATQ : OpCode.GAT, 4)
 			{
 				Cas = Cas
 			};

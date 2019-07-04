@@ -11,17 +11,17 @@ namespace Enyim.Caching.Memcached
 	{
 		private static readonly UTF8Encoding utf8 = new UTF8Encoding(false);
 
-		private readonly MemoryPool<byte> pool;
+		private readonly MemoryPool<byte> allocator;
 
-		public Utf8KeyTransformer(MemoryPool<byte> pool)
+		public Utf8KeyTransformer(MemoryPool<byte> allocator)
 		{
-			this.pool = pool ?? throw new ArgumentNullException(nameof(pool));
+			this.allocator = allocator ?? throw new ArgumentNullException(nameof(allocator));
 		}
 
 		public IMemoryOwner<byte> Transform(string key)
 		{
 			var keyLength = utf8.GetByteCount(key);
-			var retval = pool.RentExact(keyLength); // DO NOT DISPOSE!
+			var retval = allocator.RentExact(keyLength); // DO NOT DISPOSE!
 			var count = utf8.GetBytes(key, retval.Memory.Span);
 			Debug.Assert(count == keyLength);
 

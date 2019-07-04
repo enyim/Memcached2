@@ -9,7 +9,7 @@ namespace Enyim.Caching.Memcached
 		{
 			using var realKey = keyTransformer.Transform(key);
 
-			var op = new Operations.TouchOperation(pool, realKey.Memory)
+			var op = new Operations.TouchOperation(allocator, realKey.Memory)
 			{
 				Cas = cas,
 				Expiration = expiration

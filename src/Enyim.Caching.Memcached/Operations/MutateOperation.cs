@@ -7,8 +7,8 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class MutateOperation : BinaryItemOperation, ICanBeSilent
 	{
-		public MutateOperation(MemoryPool<byte> pool, in ReadOnlyMemory<byte> key, MutationMode mode, ulong delta, ulong defaultValue)
-			: base(pool, key)
+		public MutateOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key, MutationMode mode, ulong delta, ulong defaultValue)
+			: base(allocator, key)
 		{
 			Mode = mode;
 			Delta = delta;
@@ -51,7 +51,7 @@ namespace Enyim.Caching.Memcached.Operations
 		 */
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(Pool, Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode, 20)
+			using var builder = new BinaryRequestBuilder(Allocator, Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode, 20)
 			{
 				Cas = Cas
 			};
