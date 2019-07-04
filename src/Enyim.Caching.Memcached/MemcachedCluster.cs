@@ -13,40 +13,39 @@ namespace Enyim.Caching.Memcached
 		private readonly ISocketFactory socketFactory;
 
 		/// <param name="endpoints">List of host names or ip addresses with optional port specifiers, separated by ',' or ';'. E.g. "10.0.0.1,10.0.0.2:11200"</param>
-		public MemcachedCluster(string endpoints, INodeLocator? locator = null, IReconnectPolicyFactory? reconnectPolicy = null, IFailurePolicyFactory? failurePolicyFactory = null, ISocketFactory? socketFactory = null, MemoryPool<byte>? pool = null)
-			: this(ParseEndPoints(endpoints), locator, reconnectPolicy, failurePolicyFactory, socketFactory, pool) { }
+		public MemcachedCluster(string endpoints, IMemcachedClusterOptions? options = null)
+			: this(ParseEndPoints(endpoints ?? throw new ArgumentNullException(nameof(endpoints))), options) { }
 
-		public MemcachedCluster(IEnumerable<string> endpoints, INodeLocator? locator = null, IReconnectPolicyFactory? reconnectPolicy = null, IFailurePolicyFactory? failurePolicyFactory = null, ISocketFactory? socketFactory = null, MemoryPool<byte>? pool = null)
-			: this(ParseEndPoints(endpoints), locator, reconnectPolicy, failurePolicyFactory, socketFactory, pool) { }
+		public MemcachedCluster(IEnumerable<string> endpoints, IMemcachedClusterOptions? options = null)
+			: this(ParseEndPoints(endpoints ?? throw new ArgumentNullException(nameof(endpoints))), options) { }
 
-		public MemcachedCluster(
-			IEnumerable<IPEndPoint> endpoints,
-			INodeLocator? locator = null,
-			IReconnectPolicyFactory? reconnectPolicy = null,
-			IFailurePolicyFactory? failurePolicyFactory = null,
-			ISocketFactory? socketFactory = null,
-			MemoryPool<byte>? pool = null)
+		public MemcachedCluster(IEnumerable<IPEndPoint> endpoints, IMemcachedClusterOptions? options = null)
+			: this(endpoints, options ?? new MemcachedClusterOptions(), false) { }
+
+		private MemcachedCluster(IEnumerable<IPEndPoint> endpoints, IMemcachedClusterOptions options, bool _)
 			: base(endpoints,
-					locator ?? new DefaultNodeLocator(),
-					reconnectPolicy ?? new PeriodicReconnectPolicyFactory())
+					options.Locator ?? throw PropertyCannotBeNull(nameof(options.Locator)),
+					options.ReconnectPolicyFactory ?? throw PropertyCannotBeNull(nameof(options.ReconnectPolicyFactory)))
 		{
-			this.pool = pool ?? MemoryPool<byte>.Shared;
-			this.socketFactory = socketFactory ?? new AsyncSocketFactory();
-			this.failurePolicyFactory = failurePolicyFactory ?? new ImmediateFailurePolicyFactory();
+			pool = options.Allocator ?? throw PropertyCannotBeNull(nameof(options.Allocator));
+			socketFactory = options.SocketFactory ?? throw PropertyCannotBeNull(nameof(options.SocketFactory));
+			failurePolicyFactory = options.FailurePolicyFactory ?? throw PropertyCannotBeNull(nameof(options.FailurePolicyFactory));
 		}
 
 		protected override INode CreateNode(IPEndPoint endpoint)
 			=> new MemcachedNode(pool, this, endpoint, socketFactory.Create(), failurePolicyFactory);
 
 		private static IEnumerable<IPEndPoint> ParseEndPoints(string value)
-			=> ParseEndPoints((value ?? throw new ArgumentNullException(nameof(value)))
-						.Split(new char[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries));
+			=> ParseEndPoints(value.Split(new char[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries));
 
 		private static IEnumerable<IPEndPoint> ParseEndPoints(IEnumerable<string> value)
-			=> (value ?? throw new ArgumentNullException(nameof(value)))
+			=> value
 					.Where(v => !String.IsNullOrEmpty(v))
-					.Select(v => EndPointHelper
-									.New(v.Trim(), Protocol.DefaultPort));
+					.Select(v => EndPointHelper.Parse(v.Trim()))
+					.ToArray();
+
+		private static ArgumentNullException PropertyCannotBeNull(string property)
+			=> new ArgumentNullException("options", $"Property options.{property} cannot be null");
 	}
 }
 

@@ -25,7 +25,7 @@ namespace Enyim.Caching.Memcached
 
 			mockFactory.Setup(f => f.Create(It.IsAny<INode>())).Returns(mockInstance.Object);
 
-			var retval = new MemcachedCluster(fixture.Run(), failurePolicyFactory: mockFactory.Object);
+			var retval = new MemcachedCluster(fixture.Run(), new MemcachedClusterOptions { FailurePolicyFactory = mockFactory.Object });
 			retval.Start();
 
 			return retval;

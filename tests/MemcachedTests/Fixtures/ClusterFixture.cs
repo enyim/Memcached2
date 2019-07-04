@@ -38,9 +38,9 @@ namespace Enyim.Caching.Memcached
 		protected static ICluster NewCluster(TServerFixture servers)
 		{
 			var retval = new MemcachedCluster(servers.Run(),
-							socketFactory:
-								Debugger.IsAttached ? new AsyncSocketFactory(new SocketOptions { ConnectionTimeout = TimeSpan.FromSeconds(3600) })
-								: null
+								Debugger.IsAttached
+									? new MemcachedClusterOptions { SocketFactory = new AsyncSocketFactory(new SocketOptions { ConnectionTimeout = TimeSpan.FromSeconds(3600) }) }
+									: null
 						);
 
 			retval.Start();
