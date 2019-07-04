@@ -66,13 +66,7 @@ namespace Enyim.Caching.Memcached
 
 		private class AlreadyFailedNode : INode
 		{
-			private static readonly Lazy<TaskCompletionSource<IOperation>> FailedTask = new Lazy<TaskCompletionSource<IOperation>>(() =>
-			{
-				var retval = new TaskCompletionSource<IOperation>(TaskCreationOptions.RunContinuationsAsynchronously);
-				retval.SetException(new IOException("NoNodesAreAvailable"));
-
-				return retval;
-			});
+			private static readonly Task<IOperation> FailedTask = Task.FromException<IOperation>(new IOException("NoNodesAreAvailable"));
 
 			public static readonly INode Instance = new AlreadyFailedNode();
 
@@ -81,7 +75,7 @@ namespace Enyim.Caching.Memcached
 
 			public void Connect(CancellationToken token) { }
 			public void Run(CancellationToken token) { }
-			public Task<IOperation> Enqueue(IOperation op) => FailedTask.Value.Task;
+			public Task<IOperation> Enqueue(IOperation op) => FailedTask;
 			public void Shutdown() { }
 
 			public override string ToString() => "NoNodesAreAvailable";

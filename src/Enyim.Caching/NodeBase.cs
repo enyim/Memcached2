@@ -308,7 +308,7 @@ namespace Enyim.Caching
 			catch (Exception e)
 			{
 				logger.Error(e, "Cannot serialize operation {operation}", data.Op);
-				data.Task.SetException(e);
+				data.Task.TrySetException(e);
 
 				return false;
 			}
@@ -494,7 +494,7 @@ namespace Enyim.Caching
 				// kill the partially sent op (if any)
 				if (!currentWriteOp.IsEmpty)
 				{
-					currentWriteOp.Task.SetException(fail);
+					currentWriteOp.Task.TrySetException(fail);
 					currentWriteOp = default;
 				}
 
