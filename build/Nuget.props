@@ -17,6 +17,7 @@
     <PackageProjectUrl>https://github.com/enyim/Memcached2</PackageProjectUrl>
     <PackageTags />
 
+    <GitRepositoryRemoteName>gh</GitRepositoryRemoteName>
     <PublishRepositoryUrl>True</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

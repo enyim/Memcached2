@@ -2,6 +2,7 @@
 <Project>
 
   <PropertyGroup>
+    <OutputType>Library</OutputType>
     <Deterministic>true</Deterministic>
     <Features>strict</Features>
     <LangVersion>8.0</LangVersion>
