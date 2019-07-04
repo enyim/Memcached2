@@ -11,7 +11,7 @@ namespace Enyim.Caching.Memcached
 		{
 			try
 			{
-				var tasks = cluster.Broadcast(_ => new Operations.FlushOperation(allocator) { When = when });
+				var tasks = cluster.Broadcast((_, state) => new Operations.FlushOperation(state.allocator) { When = state.when }, (allocator, when));
 				await Task.WhenAll(tasks).ConfigureAwait(false);
 
 				return true;

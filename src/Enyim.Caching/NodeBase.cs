@@ -19,7 +19,11 @@ namespace Enyim.Caching
 		private readonly IPEndPoint endpoint;
 		private readonly ISocket socket;
 		private readonly string name; // used for tracing
+		private readonly Action<bool> flushWriteBufferAction;
+		private readonly Action<bool> tryAskForMoreDataAction;
 		private readonly IFailurePolicy failurePolicy;
+
+		private readonly NodePerformanceMonitor npm;
 
 		private bool isAlive; // if the socket is alive (ALIVE) or not (DEAD)
 		private int currentlyReading; // if a read is in progress, to prevent re-entrancy on reads when a node is queued for IO multiple times
@@ -40,7 +44,6 @@ namespace Enyim.Caching
 		private IResponse? inprogressResponse;
 
 		private bool mustReconnect;
-		private readonly NodePerformanceMonitor npm;
 
 		protected NodeBase(ICluster owner, IPEndPoint endpoint, ISocket socket, IFailurePolicyFactory failurePolicyFactory)
 		{
@@ -56,9 +59,11 @@ namespace Enyim.Caching
 			IsAlive = true;
 			mustReconnect = true;
 
-			npm = new NodePerformanceMonitor(name);
-
+			flushWriteBufferAction = FlushWriteBufferRequest;
+			tryAskForMoreDataAction = TryAskForMoreDataRequest;
 			failurePolicy = (failurePolicyFactory ?? throw new ArgumentNullException(nameof(failurePolicyFactory))).Create(this);
+
+			npm = new NodePerformanceMonitor(name);
 		}
 
 		protected abstract IResponse CreateResponse();
@@ -251,24 +256,25 @@ namespace Enyim.Caching
 		protected virtual void FlushWriteBuffer()
 		{
 			npm.Flush();
+			socket.SendRequest(flushWriteBufferAction);
+		}
 
-			socket.SendRequest(success =>
+		private void FlushWriteBufferRequest(bool success)
+		{
+			if (success)
 			{
-				if (success)
-				{
-					logger.Trace("Node {node} sent the write buffer successfully", name);
+				logger.Trace("Node {node} sent the write buffer successfully", name);
 
-					FinishedWriting();
-					owner.NeedsIO(this);
-				}
-				else
-				{
-					// this is a soft fail (cannot throw from other thread)
-					// so we requeue for IO and Run() will throw instead
-					logger.Trace("Node {node}'s FlushWriteBuffer failed", name);
-					FailMe(new IOException("send fail"));
-				}
-			});
+				FinishedWriting();
+				owner.NeedsIO(this);
+			}
+			else
+			{
+				// this is a soft fail (cannot throw from other thread)
+				// so we requeue for IO and Run() will throw instead
+				logger.Trace("Node {node}'s FlushWriteBuffer failed", name);
+				FailMe(new IOException("send fail"));
+			}
 		}
 
 		protected virtual OpQueueEntry GetNextOp()
@@ -351,21 +357,23 @@ namespace Enyim.Caching
 			{
 				logger.Trace("Read buffer is empty, asking for more.");
 
-				socket.ReceiveResponse(success =>
-				{
-					if (success)
-					{
-						logger.Trace("Node {node} successfully received {count} bytes", name, socket.ResponseBuffer.Remaining);
-						FinishedReading();
-						owner.NeedsIO(this);
-					}
-					else
-					{
-						// this is a soft fail (cannot throw from other thread),
-						// so we requeue for IO and exception will be thrown by Receive()
-						FailMe(new IOException("Failed receiving from " + endpoint));
-					}
-				});
+				socket.ReceiveResponse(tryAskForMoreDataAction);
+			}
+		}
+
+		private void TryAskForMoreDataRequest(bool success)
+		{
+			if (success)
+			{
+				logger.Trace("Node {node} successfully received {count} bytes", name, socket.ResponseBuffer.Remaining);
+				FinishedReading();
+				owner.NeedsIO(this);
+			}
+			else
+			{
+				// this is a soft fail (cannot throw from other thread),
+				// so we requeue for IO and exception will be thrown by Receive()
+				FailMe(new IOException("Failed receiving from " + endpoint));
 			}
 		}
 
