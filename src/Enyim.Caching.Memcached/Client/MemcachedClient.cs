@@ -10,21 +10,20 @@ namespace Enyim.Caching.Memcached
 		private readonly IKeyTransformer keyTransformer;
 		private readonly MemoryPool<byte> pool;
 
-		public MemcachedClient(
-			ICluster cluster,
-			MemoryPool<byte>? pool = null,
-			IKeyTransformer? keyTransformer = null,
-			ITranscoder? transcoder = null)
+		public MemcachedClient(ICluster cluster, IMemcachedClientOptions? options = null)
 		{
+			if (options == null) options = new MemcachedClientOptions();
+
 			this.cluster = cluster ?? throw new ArgumentNullException(nameof(cluster));
-			if (!cluster.IsStarted) throw new InvalidOperationException("Cluster must be started before creating client instances");
+			if (!cluster.IsStarted) throw new ArgumentException("Cluster must be started before creating client instances", nameof(cluster));
 
-			var thePool = pool ?? MemoryPool<byte>.Shared;
-			this.pool = thePool;
-			this.keyTransformer = keyTransformer ?? new Utf8KeyTransformer(thePool);
-
-			this.transcoder = transcoder ?? new BinaryTranscoder();
+			pool = options.Allocator ?? throw PropertyCannotBeNull(nameof(options.Allocator));
+			keyTransformer = options.KeyTransformer ?? throw PropertyCannotBeNull(nameof(options.KeyTransformer));
+			transcoder = options.Transcoder ?? throw PropertyCannotBeNull(nameof(options.Transcoder));
 		}
+
+		private static ArgumentNullException PropertyCannotBeNull(string property)
+			=> new ArgumentNullException("options", $"Property options.{property} cannot be null");
 	}
 }
 

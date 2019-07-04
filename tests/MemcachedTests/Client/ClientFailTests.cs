@@ -50,6 +50,52 @@ namespace Enyim.Caching.Memcached
 
 			await Assert.ThrowsAsync<SerializationException>(() => client.SetAsync("aaaaa", new { A = "a" }));
 		}
+
+		[Fact]
+		public void Client_Should_Only_Work_With_Started_Server()
+		{
+			var mockCluster = new Mock<ICluster>();
+			mockCluster.SetupGet(c => c.IsStarted).Returns(false);
+
+			var e = Assert.Throws<ArgumentException>(() => new MemcachedClient(mockCluster.Object, new MemcachedClientOptions()));
+			Assert.Contains("must be started", e.Message);
+
+			Mock.Verify();
+		}
+
+		[Fact]
+		public void Constructor_Should_Throw_When_Options_Is_Invalid()
+		{
+			static Exception AssertException(Action<Mock<IMemcachedClientOptions>> extraSetup)
+			{
+				var defaultOptions = new MemcachedClientOptions();
+				var mockCluster = new Mock<ICluster>();
+				mockCluster.SetupGet(c => c.IsStarted).Returns(true);
+
+				var mockOptions = new Mock<IMemcachedClientOptions>(MockBehavior.Strict);
+
+				mockOptions.SetupGet(o => o.Allocator).Returns(defaultOptions.Allocator);
+				mockOptions.SetupGet(o => o.KeyTransformer).Returns(defaultOptions.KeyTransformer);
+				mockOptions.SetupGet(o => o.Transcoder).Returns(defaultOptions.Transcoder);
+
+				extraSetup?.Invoke(mockOptions);
+
+				return Assert.Throws<ArgumentNullException>(() => new MemcachedClient(mockCluster.Object, mockOptions.Object));
+			}
+
+			Exception e;
+
+			e = AssertException(mock => mock.SetupGet(o => o.Allocator).Returns(() => null));
+			Assert.Contains(nameof(IMemcachedClientOptions.Allocator), e.Message);
+
+			e = AssertException(mock => mock.SetupGet(o => o.KeyTransformer).Returns(() => null));
+			Assert.Contains(nameof(IMemcachedClientOptions.KeyTransformer), e.Message);
+
+			e = AssertException(mock => mock.SetupGet(o => o.Transcoder).Returns(() => null));
+			Assert.Contains(nameof(IMemcachedClientOptions.Transcoder), e.Message);
+
+			Mock.Verify();
+		}
 	}
 }
 

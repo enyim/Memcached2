@@ -33,7 +33,7 @@ namespace Enyim.Caching.Memcached
 			=> Servers?.Dispose();
 
 		protected static MemcachedClient NewClient(ICluster cluster)
-			=> new MemcachedClient(cluster, MemoryPool<byte>.Shared, new Utf8KeyTransformer(MemoryPool<byte>.Shared), new BinaryTranscoder());
+			=> new MemcachedClient(cluster);
 
 		protected static ICluster NewCluster(TServerFixture servers)
 		{

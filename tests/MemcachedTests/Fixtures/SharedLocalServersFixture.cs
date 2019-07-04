@@ -32,15 +32,17 @@ namespace Enyim.Caching.Memcached
 		{
 			lock (serverLock)
 			{
-				Debug.Assert(sharedRefCount > 0);
-				Debug.Assert(sharedServers != null);
-
-				sharedRefCount--;
-
-				if (sharedRefCount == 0)
+				if (sharedRefCount > 0)
 				{
-					sharedServers.Dispose();
-					sharedServers = null;
+					Debug.Assert(sharedServers != null);
+
+					sharedRefCount--;
+
+					if (sharedRefCount == 0)
+					{
+						sharedServers.Dispose();
+						sharedServers = null;
+					}
 				}
 			}
 		}
