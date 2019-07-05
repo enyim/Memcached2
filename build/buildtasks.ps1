@@ -23,8 +23,8 @@ Task Clean {
     Get-ChildItem -Recurse bin, obj -Directory | Remove-Item -Recurse -Force
 
     if (Test-Path $OutputPath) {
-        Write-Host "Removing $OutputPath"
-        Remove-Item $OutputPath -Recurse -Force
+        Write-Host "Cleaning up $OutputPath"
+        Remove-Item $OutputPath\* -Recurse -Force
     }
 }
 
