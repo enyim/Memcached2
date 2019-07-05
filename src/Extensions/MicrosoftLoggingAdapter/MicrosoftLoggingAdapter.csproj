@@ -6,8 +6,8 @@
 
   <PropertyGroup>
     <RootNamespace>Enyim.Memcached.Diagnostics</RootNamespace>
-    <AssemblyName>Enyim.Memcached.Diagnostics.Extensions.Logging</AssemblyName>
-    <AssemblyTitle>Enyim.Memcached.Diagnostics.Extensions.Logging</AssemblyTitle>
+    <AssemblyName>Enyim.Memcached.Diagnostics.ExtensionsLogging</AssemblyName>
+    <AssemblyTitle>Enyim.Memcached.Diagnostics.ExtensionsLogging</AssemblyTitle>
     <Description>Enyim.Memcached diagnostics logging provider using Microsoft.Extensions.Logging</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
