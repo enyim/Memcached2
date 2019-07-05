@@ -3,49 +3,85 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
+using Enyim.Caching.Memcached.Internal;
 
 namespace Enyim.Caching.Memcached
 {
-	public class MemcachedCluster : ClusterBase
+	public class MemcachedCluster : ClusterBase, IMemcachedCluster
 	{
+		private readonly object clientLock = new Object();
+
 		private readonly MemoryPool<byte> allocator;
 		private readonly IFailurePolicyFactory failurePolicyFactory;
+		private readonly IMemcachedClientOptions clientOptions;
 		private readonly ISocketFactory socketFactory;
+		private IMemcachedClient? defaultClient;
 
 		/// <param name="endpoints">List of host names or ip addresses with optional port specifiers, separated by ',' or ';'. E.g. "10.0.0.1,10.0.0.2:11200"</param>
-		public MemcachedCluster(string endpoints, IMemcachedClusterOptions? options = null)
-			: this(ParseEndPoints(endpoints ?? throw new ArgumentNullException(nameof(endpoints))), options) { }
+		public MemcachedCluster(string endpoints,
+									IMemcachedClusterOptions? clusterOptions = null,
+									IMemcachedClientOptions? clientOptions = null)
+			: this(EndPointHelper.ParseList(endpoints ?? throw new ArgumentNullException(nameof(endpoints))),
+					clusterOptions,
+					clientOptions)
+		{ }
 
-		public MemcachedCluster(IEnumerable<string> endpoints, IMemcachedClusterOptions? options = null)
-			: this(ParseEndPoints(endpoints ?? throw new ArgumentNullException(nameof(endpoints))), options) { }
+		public MemcachedCluster(IEnumerable<string> endpoints,
+									IMemcachedClusterOptions? clusterOptions = null,
+									IMemcachedClientOptions? clientOptions = null)
+			: this(EndPointHelper.ParseList(endpoints ?? throw new ArgumentNullException(nameof(endpoints))),
+					clusterOptions,
+					clientOptions)
+		{ }
 
-		public MemcachedCluster(IEnumerable<IPEndPoint> endpoints, IMemcachedClusterOptions? options = null)
-			: this(endpoints, options ?? new MemcachedClusterOptions(), false) { }
+		public MemcachedCluster(IEnumerable<IPEndPoint> endpoints,
+									IMemcachedClusterOptions? clusterOptions = null,
+									IMemcachedClientOptions? clientOptions = null)
+			: this(endpoints ?? throw new ArgumentNullException(nameof(endpoints)),
+					clusterOptions ?? new MemcachedClusterOptions(),
+					clientOptions ?? new MemcachedClientOptions(), false)
+		{ }
 
-		private MemcachedCluster(IEnumerable<IPEndPoint> endpoints, IMemcachedClusterOptions options, bool _)
+		private MemcachedCluster(IEnumerable<IPEndPoint> endpoints,
+									IMemcachedClusterOptions clusterOptions,
+									IMemcachedClientOptions clientOptions,
+									bool _)
 			: base(endpoints,
-					options.Locator ?? throw PropertyCannotBeNull(nameof(options.Locator)),
-					options.ReconnectPolicyFactory ?? throw PropertyCannotBeNull(nameof(options.ReconnectPolicyFactory)))
+					clusterOptions.Locator ?? throw PropertyCannotBeNull(nameof(clusterOptions.Locator)),
+					clusterOptions.ReconnectPolicyFactory ?? throw PropertyCannotBeNull(nameof(clusterOptions.ReconnectPolicyFactory)))
 		{
-			allocator = options.Allocator ?? throw PropertyCannotBeNull(nameof(options.Allocator));
-			socketFactory = options.SocketFactory ?? throw PropertyCannotBeNull(nameof(options.SocketFactory));
-			failurePolicyFactory = options.FailurePolicyFactory ?? throw PropertyCannotBeNull(nameof(options.FailurePolicyFactory));
+			allocator = clusterOptions.Allocator ?? throw PropertyCannotBeNull(nameof(clusterOptions.Allocator));
+			socketFactory = clusterOptions.SocketFactory ?? throw PropertyCannotBeNull(nameof(clusterOptions.SocketFactory));
+			failurePolicyFactory = clusterOptions.FailurePolicyFactory ?? throw PropertyCannotBeNull(nameof(clusterOptions.FailurePolicyFactory));
+
+			this.clientOptions = clientOptions;
 		}
 
 		protected override INode CreateNode(IPEndPoint endpoint)
 			=> new MemcachedNode(allocator, this, endpoint, socketFactory.Create(), failurePolicyFactory);
 
-		private static IEnumerable<IPEndPoint> ParseEndPoints(string value)
-			=> ParseEndPoints(value.Split(new char[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries));
-
-		private static IEnumerable<IPEndPoint> ParseEndPoints(IEnumerable<string> value)
-			=> value
-					.Where(v => !String.IsNullOrEmpty(v))
-					.Select(v => EndPointHelper.Parse(v.Trim()))
-					.ToArray();
-
 		private static ArgumentNullException PropertyCannotBeNull(string property)
 			=> new ArgumentNullException("options", $"Property options.{property} cannot be null");
+
+		public IMemcachedClient GetClient(IMemcachedClientOptions? customOptions = null)
+		{
+			if (customOptions == null)
+			{
+				var retval = Volatile.Read(ref defaultClient);
+				if (retval == null)
+				{
+					retval = new MemcachedClient(this, clientOptions);
+
+					// is somebody else was faster return the already created instance
+					return Interlocked.CompareExchange(ref defaultClient, retval, null) ?? retval;
+				}
+
+				return retval;
+			}
+
+			return new MemcachedClient(this, customOptions);
+		}
 	}
 }
 

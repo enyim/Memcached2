@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using Enyim.Caching.Memcached.Internal;
 using Xunit;
 
 namespace Enyim.Caching.Memcached

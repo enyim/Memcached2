@@ -26,7 +26,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ISocket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISocketFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISocketOptions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DefaultSocketFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AsyncSocketFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DictionaryExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImmediateFailurePolicy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Murmur64_64.cs" />

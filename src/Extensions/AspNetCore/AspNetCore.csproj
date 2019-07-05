@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RootNamespace>Microsoft.Extensions.DependencyInjection</RootNamespace>
+    <AssemblyName>Enyim.Memcached.Extensions.AspNetCore</AssemblyName>
+    <AssemblyTitle>Enyim.Memcached.Extensions.AspNetCore</AssemblyTitle>
+    <Description>Enyim.Memcached extension for using the MemcachedClient in ASP.NET Core applications</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Enyim.Caching.Memcached\Memcached.csproj" />
+  </ItemGroup>
+
+</Project>

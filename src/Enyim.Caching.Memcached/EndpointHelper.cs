@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Enyim.Caching.Memcached
+namespace Enyim.Caching.Memcached.Internal
 {
 	public static class EndPointHelper
 	{
@@ -47,6 +47,22 @@ namespace Enyim.Caching.Memcached
 
 			return new IPEndPoint(address, port);
 		}
+
+		public static IPEndPoint[] ParseList(IEnumerable<string> value)
+			=> ParseList((value ?? throw new ArgumentNullException(nameof(value))).ToArray());
+
+		public static IPEndPoint[] ParseList(params string[] values)
+			=> (values ?? throw new ArgumentNullException(nameof(values)))
+					.Where(v => !String.IsNullOrEmpty(v))
+					.SelectMany(ParseInlineEndPoints)
+					.ToArray();
+
+		private static IEnumerable<IPEndPoint> ParseInlineEndPoints(string value)
+			=> value
+				.Split(new char[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+				.Where(v => !String.IsNullOrWhiteSpace(v))
+				.Select(v => Parse(v.Trim()));
+
 	}
 }
 

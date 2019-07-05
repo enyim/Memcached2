@@ -18,22 +18,13 @@ namespace Enyim.Caching
 		{
 			// make a snapshot of the options
 			// TODO review this
-			if (options == null)
-			{
-				connectionTimeout = AsyncSocket.Defaults.ConnectionTimeoutMsec;
-				requestTimeout = AsyncSocket.Defaults.SendTimeoutMsec;
-				responseTimeout = AsyncSocket.Defaults.ReceiveTimeoutMsec;
-				requestBufferSize = AsyncSocket.Defaults.SendBufferSize;
-				responseBufferSize = AsyncSocket.Defaults.ReceiveBufferSize;
-			}
-			else
-			{
-				connectionTimeout = options.ConnectionTimeout;
-				requestTimeout = options.RequestTimeout;
-				responseTimeout = options.ResponseTimeout;
-				requestBufferSize = options.RequestBufferSize;
-				responseBufferSize = options.ResponseBufferSize;
-			}
+			if (options == null) options = new SocketOptions();
+
+			connectionTimeout = options.ConnectionTimeout;
+			requestTimeout = options.RequestTimeout;
+			responseTimeout = options.ResponseTimeout;
+			requestBufferSize = options.RequestBufferSize;
+			responseBufferSize = options.ResponseBufferSize;
 		}
 
 		public ISocket Create() => new AsyncSocket(lohPool)

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Moq;
 using System.Linq.Expressions;
+using System.Collections.Concurrent;
 
 namespace Enyim.Caching.Memcached
 {
@@ -55,6 +56,33 @@ namespace Enyim.Caching.Memcached
 
 			Mock.Verify();
 		}
+
+
+		[Fact]
+		public async Task Default_Client_Should_Be_Cached()
+		{
+			var socket = new Mock<ISocket>();
+			socket.SetupGet(s => s.IsAlive).Returns(true);
+
+			var factory = new Mock<ISocketFactory>();
+			factory.Setup(f => f.Create()).Returns(socket.Object);
+
+			var set = new ConcurrentBag<IMemcachedClient>();
+			var cluster = new MemcachedCluster("localhost", new MemcachedClusterOptions { SocketFactory = factory.Object });
+			cluster.Start();
+
+			const int COUNT = 1000;
+			var tasks = Enumerable.Range(0, COUNT).Select(_ => Task.Run(() => set.Add(cluster.GetClient()))).ToArray();
+
+			await Task.WhenAll(tasks);
+
+			Assert.Equal(COUNT, set.Count);
+
+			var tmp = set.Distinct().ToArray();
+			Assert.Equal(1, tmp.Length);
+
+		}
+
 	}
 }
 

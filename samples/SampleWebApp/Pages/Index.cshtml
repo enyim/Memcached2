@@ -1,0 +1,13 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@using Enyim.Caching.Memcached
+@inject  IMemcachedClient client
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>The page was reloaded @(await client.IncrementAsync("PageCounter", expiration: TimeSpan.FromSeconds(10))) times</p>
+</div>
