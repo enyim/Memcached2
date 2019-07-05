@@ -6,9 +6,9 @@
 
   <PropertyGroup>
     <RootNamespace>Enyim.Memcached.Diagnostics</RootNamespace>
-    <AssemblyName>Enyim.Memcached.Diagnostics.NLog</AssemblyName>
-    <AssemblyTitle>Enyim.Memcached.Diagnostics.NLog</AssemblyTitle>
-    <Description>Enyim.Memcached diagnostics logging provider using NLog 4.x</Description>
+    <AssemblyName>Enyim.Memcached2.Diagnostics.NLog</AssemblyName>
+    <AssemblyTitle>Enyim.Memcached2.Diagnostics.NLog</AssemblyTitle>
+    <Description>Enyim.Memcached2 diagnostics logging provider using NLog 4.x</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 

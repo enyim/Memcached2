@@ -6,9 +6,9 @@
 
   <PropertyGroup>
     <RootNamespace>Enyim.Caching.Memcached</RootNamespace>
-    <AssemblyName>Enyim.Caching.Memcached2</AssemblyName>
-    <AssemblyTitle>EnyimMemcached2</AssemblyTitle>
-    <Description>Memcached client library for .NET based languages.</Description>
+    <AssemblyName>Enyim.Memcached2</AssemblyName>
+    <AssemblyTitle>Enyim.Memcached2</AssemblyTitle>
+    <Description>Memcached client library v2 for .NET Core</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 

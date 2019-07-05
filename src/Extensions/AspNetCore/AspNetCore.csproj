@@ -7,9 +7,9 @@
 
   <PropertyGroup>
     <RootNamespace>Microsoft.Extensions.DependencyInjection</RootNamespace>
-    <AssemblyName>Enyim.Memcached.Extensions.AspNetCore</AssemblyName>
-    <AssemblyTitle>Enyim.Memcached.Extensions.AspNetCore</AssemblyTitle>
-    <Description>Enyim.Memcached extension for using the MemcachedClient in ASP.NET Core applications</Description>
+    <AssemblyName>Enyim.Memcached2.Extensions.AspNetCore</AssemblyName>
+    <AssemblyTitle>Enyim.Memcached2.Extensions.AspNetCore</AssemblyTitle>
+    <Description>Enyim.Memcached2 extension for using the MemcachedClient in ASP.NET Core applications</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 

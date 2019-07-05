@@ -6,9 +6,9 @@
 
   <PropertyGroup>
     <RootNamespace>Enyim.Memcached.Diagnostics</RootNamespace>
-    <AssemblyName>Enyim.Memcached.Diagnostics.Serilog</AssemblyName>
-    <AssemblyTitle>Enyim.Memcached.Diagnostics.Serilog</AssemblyTitle>
-    <Description>Enyim.Memcached diagnostics logging provider using Serilog 2.x</Description>
+    <AssemblyName>Enyim.Memcached2.Diagnostics.Serilog</AssemblyName>
+    <AssemblyTitle>Enyim.Memcached2.Diagnostics.Serilog</AssemblyTitle>
+    <Description>Enyim.Memcached2 diagnostics logging provider using Serilog 2.x</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
