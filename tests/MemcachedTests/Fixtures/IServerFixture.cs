@@ -7,7 +7,6 @@ namespace Enyim.Caching.Memcached
 	{
 		IPEndPoint[] Run();
 	}
-
 }
 
 #region [ License information          ]

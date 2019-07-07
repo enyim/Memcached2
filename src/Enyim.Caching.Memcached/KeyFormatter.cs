@@ -1,27 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Enyim.Caching.Memcached
 {
-	public partial class MemcachedClientTests
+	public static class KeyFormatter
 	{
-#if ENABLE_MULTIGET
-		[Fact]
-		public async Task When_Getting_Multiple_Keys_As_Object_Without_Cas_Result_Is_Successful()
+		public static void ThrowIfInvalidKey(string key)
 		{
-			await SetupNewItems(100, async (keys, value) =>
-			{
-				var values = await client.Get(keys);
-
-				Assert.Equal(keys.OrderBy(a => a), values.Keys.OrderBy(a => a));
-				Assert.All(values, kvp => Assert.Equal(value, kvp.Value));
-			});
+			if (key == null) throw new ArgumentNullException(nameof(key), "key cannot be null");
+			if (key.Length == 0) throw new ArgumentException("key cannot be empty", nameof(key));
 		}
-#endif
 	}
 }
 

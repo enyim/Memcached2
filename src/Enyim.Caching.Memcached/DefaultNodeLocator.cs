@@ -34,7 +34,7 @@ namespace Enyim.Caching.Memcached
 				if (bucketCount == 0) return AlreadyFailedNode.Instance;
 				if (bucketCount == 1) return nodes[0];
 
-				var (_, high) = MurmurHash3.ComputeHash128(key);
+				var (_, high) = MurmurHash3.ComputeHash128(key); // TODO maybe (low XOR high)?
 				var bucketIndex = JumpConsistentHash(high, bucketCount);
 
 				return nodes[bucketIndex];

@@ -29,11 +29,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)AsyncSocketFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DictionaryExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImmediateFailurePolicy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Murmur64_64.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MurmurHash3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NodeBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NodePerformanceMonitor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NodeQueue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReadBuffer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Require.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SegmentedStream.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SerializationException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SequenceBuilder.cs" />

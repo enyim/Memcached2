@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace Enyim.Caching
 {
 	// based on System.IO.Pipelines.Pipe
-	partial class SequenceBuilder
+	public partial class SequenceBuilder
 	{
 		#region [ LICENSE ]
 		/*
@@ -80,7 +80,7 @@ namespace Enyim.Caching
 				{
 					memoryOwner.Dispose();
 					memoryOwner = default;
-					AvailableMemory = default;
+					AvailableMemory = Memory<byte>.Empty;
 				}
 			}
 

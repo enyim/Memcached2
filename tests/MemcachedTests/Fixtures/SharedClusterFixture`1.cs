@@ -7,16 +7,18 @@ namespace Enyim.Caching.Memcached
 		where TServerFixture : IServerFixture, new()
 	{
 		private static readonly object clusterLock = new Object();
-		private static ICluster sharedCluster;
+		private static IMemcachedCluster sharedCluster;
+		private static TServerFixture sharedServers;
 
 		private static int sharedRefCount;
 
-		protected override ICluster GetCluster()
+		protected override IMemcachedCluster GetCluster()
 		{
 			lock (clusterLock)
 			{
 				if (sharedCluster == null)
 				{
+					sharedServers = Servers;
 					sharedCluster = NewCluster(Servers);
 				}
 
@@ -30,22 +32,23 @@ namespace Enyim.Caching.Memcached
 		{
 			lock (clusterLock)
 			{
-				Debug.Assert(sharedRefCount > 0);
-				Debug.Assert(sharedCluster != null);
-
-				sharedRefCount--;
-
-				if (sharedRefCount == 0)
+				if (sharedRefCount > 0)
 				{
-					sharedCluster.Dispose();
-					Servers?.Dispose();
-					sharedCluster = null;
+					Debug.Assert(sharedCluster != null);
+
+					sharedRefCount--;
+
+					if (sharedRefCount == 0)
+					{
+						sharedCluster?.Dispose();
+						sharedCluster = null;
+
+						sharedServers.Dispose();
+					}
 				}
 			}
 		}
-
 	}
-
 }
 
 #region [ License information          ]

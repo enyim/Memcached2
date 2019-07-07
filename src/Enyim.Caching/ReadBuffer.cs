@@ -5,7 +5,7 @@ namespace Enyim.Caching
 {
 	public sealed class ReadBuffer
 	{
-		private ReadOnlyMemory<byte> buffer;
+		private readonly ReadOnlyMemory<byte> buffer;
 
 		private int remaining;
 		private int position;

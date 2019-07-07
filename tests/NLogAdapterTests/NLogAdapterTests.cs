@@ -20,7 +20,7 @@ namespace Enyim.Caching.Tests
 			var config = new NLog.Config.LoggingConfiguration();
 			config.AddRuleForAllLevels(mock.Object);
 
-			LogManager.AssignFactory(new Enyim.Caching.Diagnostics.NLogLoggerFactory(new NLog.LogFactory(config)));
+			LogManager.AssignFactory(new Enyim.Diagnostics.NLogLoggerFactory(new NLog.LogFactory(config)));
 			LogManager.Create(typeof(NLogAdapterTests)).Log(enyimLevel, exception, message);
 
 			mock.Protected().Verify("Write", Times.Once(),

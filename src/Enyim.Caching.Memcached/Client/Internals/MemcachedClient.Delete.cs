@@ -6,20 +6,17 @@ namespace Enyim.Caching.Memcached
 {
 	public partial class MemcachedClient
 	{
-		private async Task<Operations.DeleteOperation> PerformDelete(string key, ulong cas, bool silent)
+		private Operations.DeleteOperation PerformDelete(string key, ulong cas, bool silent)
 		{
-			using var realKey = keyTransformer.Transform(key);
-
-			var op = new Operations.DeleteOperation(allocator, realKey.Memory)
+			var retval = new Operations.DeleteOperation(allocator, key, keyFormatter)
 			{
 				Cas = cas,
 				Silent = silent
 			};
 
-			// must wait for the operation to finish, otherwide the key would be disposed earlier than the op was ran
-			await cluster.Execute(op).ConfigureAwait(false);
+			retval.Initialize();
 
-			return op;
+			return retval;
 		}
 	}
 }

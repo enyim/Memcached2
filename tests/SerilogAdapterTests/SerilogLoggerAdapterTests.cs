@@ -20,7 +20,7 @@ namespace Enyim.Caching.Tests
 							.WriteTo.Sink(mock.Object)
 							.CreateLogger();
 
-			Enyim.LogManager.AssignFactory(new Enyim.Caching.Diagnostics.SerilogLoggerFactory(root));
+			Enyim.LogManager.AssignFactory(new Enyim.Diagnostics.SerilogLoggerFactory(root));
 			LogManager.Create(typeof(SerilogLoggerAdapterTests)).Log(enyimLevel, exception, message);
 
 			mock.Verify(sink => sink.Emit(It.Is<LogEvent>(e => e.Level == serilogLevel && e.MessageTemplate.Text == message && e.Exception == exception)));

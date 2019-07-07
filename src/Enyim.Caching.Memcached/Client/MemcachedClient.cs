@@ -5,21 +5,21 @@ namespace Enyim.Caching.Memcached
 {
 	public partial class MemcachedClient : IMemcachedClient
 	{
-		private readonly ITranscoder transcoder;
-		private readonly ICluster cluster;
-		private readonly IKeyTransformer keyTransformer;
+		private readonly IMemcachedCluster cluster;
+		private readonly IKeyFormatter keyFormatter;
+		private readonly IItemFormatter itemFormatter;
 		private readonly MemoryPool<byte> allocator;
 
-		public MemcachedClient(ICluster cluster, IMemcachedClientOptions? options = null)
+		public MemcachedClient(IMemcachedCluster cluster, IMemcachedClientOptions? options = null)
 		{
-			if (options == null) options = new MemcachedClientOptions();
-
 			this.cluster = cluster ?? throw new ArgumentNullException(nameof(cluster));
 			if (!cluster.IsStarted) throw new ArgumentException("Cluster must be started before creating client instances", nameof(cluster));
 
-			allocator = options.Allocator ?? throw PropertyCannotBeNull(nameof(options.Allocator));
-			keyTransformer = options.KeyTransformer ?? throw PropertyCannotBeNull(nameof(options.KeyTransformer));
-			transcoder = options.Transcoder ?? throw PropertyCannotBeNull(nameof(options.Transcoder));
+			this.allocator = cluster.Allocator;
+
+			if (options == null) options = new MemcachedClientOptions();
+			keyFormatter = options.KeyFormatter ?? throw PropertyCannotBeNull(nameof(options.KeyFormatter));
+			itemFormatter = options.ItemFormatter ?? throw PropertyCannotBeNull(nameof(options.ItemFormatter));
 		}
 
 		private static ArgumentNullException PropertyCannotBeNull(string property)

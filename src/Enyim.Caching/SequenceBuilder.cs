@@ -76,6 +76,26 @@ namespace Enyim.Caching
 			return retval;
 		}
 
+		public SequencePosition Mark()
+		{
+			return new SequencePosition(current, current?.End ?? 0);
+		}
+
+		public ReadOnlySequence<byte> Slice(SequencePosition markStart, SequencePosition markEnd)
+		{
+			if (start == null) return ReadOnlySequence<byte>.Empty;
+
+			var a = (_Segment)(markStart.GetObject() ?? start);
+			var b = (_Segment)(markEnd.GetObject() ?? start);
+
+			var pa = markStart.GetInteger();
+			var pb = markEnd.GetInteger();
+
+			if (a == b && pa == pb) return ReadOnlySequence<byte>.Empty;
+
+			return new ReadOnlySequence<byte>(a, pa, b, pb);
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private int CalcSegmentSize(int requested)
 		{

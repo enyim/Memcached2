@@ -27,6 +27,36 @@ namespace Enyim.Caching.Memcached.Client
 		}
 
 		[Fact]
+		public async Task When_Appending_To_Existing_Value_With_Valid_Cas_Result_Is_Successful()
+		{
+			await WithNewItem(async (key, value) =>
+			{
+				const string ToAppend = "The End";
+
+				var item = await Client.GetWithResultAsync<string>(key);
+				var result = await Client.ConcatWithResultAsync(ConcatenationMode.Append, key, Encoding.UTF8.GetBytes(ToAppend).AsMemory(), item.Cas);
+
+				AssertSuccess(result);
+
+				Assert.Equal(value + ToAppend, await Client.GetAsync<string>(key));
+			});
+		}
+
+
+		[Fact]
+		public async Task When_Appending_To_Existing_Value_With_Invalid_Cas_Result_Is_Unsuccessful()
+		{
+			await WithNewItem(async (key, value) =>
+			{
+				const string ToAppend = "The End";
+
+				var result = await Client.ConcatWithResultAsync(ConcatenationMode.Append, key, Encoding.UTF8.GetBytes(ToAppend).AsMemory(), UInt64.MaxValue - 1);
+
+				AssertFail(result);
+			});
+		}
+
+		[Fact]
 		public async Task When_Appending_To_Invalid_Key_Result_Is_Not_Successful()
 		{
 			const string ToAppend = "The End";
@@ -50,6 +80,35 @@ namespace Enyim.Caching.Memcached.Client
 				AssertSuccess(result);
 
 				Assert.Equal(ToPrepend + value, await Client.GetAsync<string>(key));
+			});
+		}
+
+		[Fact]
+		public async Task When_Prepending_To_Existing_Value_With_Valid_Cas_Result_Is_Successful()
+		{
+			await WithNewItem(async (key, value) =>
+			{
+				const string ToPrepend = "The Beginning";
+
+				var item = await Client.GetWithResultAsync<string>(key);
+				var result = await Client.ConcatWithResultAsync(ConcatenationMode.Prepend, key, Encoding.UTF8.GetBytes(ToPrepend).AsMemory(), item.Cas);
+
+				AssertSuccess(result);
+
+				Assert.Equal(ToPrepend + value, await Client.GetAsync<string>(key));
+			});
+		}
+
+		[Fact]
+		public async Task When_Prepending_To_Existing_Value_With_Invalid_Cas_Result_Is_Unsuccessful()
+		{
+			await WithNewItem(async (key, value) =>
+			{
+				const string ToPrepend = "The Beginning";
+
+				var result = await Client.ConcatWithResultAsync(ConcatenationMode.Prepend, key, Encoding.UTF8.GetBytes(ToPrepend).AsMemory(), UInt64.MaxValue - 1);
+
+				AssertFail(result);
 			});
 		}
 

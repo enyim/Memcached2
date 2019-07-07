@@ -9,55 +9,63 @@ namespace Enyim.Caching.Memcached
 	// starts the specified number of memched servers
 	public class MemcachedServerGroup : IDisposable
 	{
+		private readonly object serversLock;
 		private readonly int serverCount;
 		private MemcachedServer[] servers;
 
 		public MemcachedServerGroup(int serverCount)
 		{
 			this.serverCount = serverCount;
+			serversLock = new Object();
 		}
 
 		public IPEndPoint[] Run()
 		{
-			if (servers != null) throw new InvalidOperationException("Already started");
-
-			servers = new MemcachedServer[serverCount];
-
-			try
+			lock (serversLock)
 			{
-				for (var i = 0; i < servers.Length; i++)
+				if (servers != null) throw new InvalidOperationException("Already started");
+
+				servers = new MemcachedServer[serverCount];
+
+				try
 				{
-					const bool Verbose =
+					for (var i = 0; i < servers.Length; i++)
+					{
+						const bool Verbose =
 #if DEBUG
 						true;
 #else
 						false;
 #endif
 
-					servers[i] = MemcachedServer.WithAutoPort(verbose: Verbose, hidden: !Verbose);
-					servers[i].Start();
+						servers[i] = MemcachedServer.WithAutoPort(verbose: Verbose, hidden: !Verbose);
+						servers[i].Start();
+					}
+
+					Thread.Sleep(2000); // wait for the servers to start
+
+					return servers.Select(server => new IPEndPoint(IPAddress.Loopback, server.Port)).ToArray();
 				}
+				catch
+				{
+					Dispose();
 
-				Thread.Sleep(2000); // wait fopr the servers to start
-
-				return servers.Select(server => new IPEndPoint(IPAddress.Loopback, server.Port)).ToArray();
-			}
-			catch
-			{
-				Dispose();
-
-				throw;
+					throw;
+				}
 			}
 		}
 
 		public void Dispose()
 		{
-			if (servers != null)
+			lock (serversLock)
 			{
-				foreach (var s in servers)
-					s.Dispose();
+				if (servers != null)
+				{
+					foreach (var s in servers)
+						s.Dispose();
 
-				servers = null;
+					servers = null;
+				}
 			}
 		}
 	}

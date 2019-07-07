@@ -18,7 +18,7 @@ namespace Enyim.Caching.Memcached
 
 		protected TServerFixture Servers { get; }
 
-		protected abstract ICluster GetCluster();
+		protected abstract IMemcachedCluster GetCluster();
 		public virtual MemcachedClient CreateClient() => client ?? (client = NewClient(GetCluster()));
 
 		void IDisposable.Dispose()
@@ -32,10 +32,10 @@ namespace Enyim.Caching.Memcached
 		protected virtual void Dispose(bool disposing)
 			=> Servers?.Dispose();
 
-		protected static MemcachedClient NewClient(ICluster cluster)
+		protected static MemcachedClient NewClient(IMemcachedCluster cluster)
 			=> new MemcachedClient(cluster);
 
-		protected static ICluster NewCluster(TServerFixture servers)
+		protected static IMemcachedCluster NewCluster(TServerFixture servers)
 		{
 			var retval = new MemcachedCluster(servers.Run(),
 								Debugger.IsAttached

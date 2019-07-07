@@ -10,7 +10,9 @@ namespace Enyim.Caching.Memcached
 		{
 			try
 			{
-				var op = await PerformConcat(mode, key, data, cas, silent: false).ConfigureAwait(false);
+				var op = PerformConcat(mode, key, data, cas, silent: false);
+
+				await cluster.Execute(op).ConfigureAwait(false);
 
 				return new OperationResult((OperationStatus)op.StatusCode, op.Cas);
 			}

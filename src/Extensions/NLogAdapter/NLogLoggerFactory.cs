@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Enyim.Caching.Diagnostics
+namespace Enyim.Diagnostics
 {
 	using NLogLogLevel = NLog.LogLevel;
 	using INLogLogger = NLog.ILogger;

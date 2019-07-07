@@ -4,9 +4,10 @@ using System.Buffers.Binary;
 
 namespace Enyim.Caching.Memcached.Operations
 {
-	internal class GetAndTouchOperation : GetOperation
+	internal class GetAndTouchOperation : GetOperationBase
 	{
-		public GetAndTouchOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key) : base(allocator, key) { }
+		public GetAndTouchOperation(MemoryPool<byte> allocator, string key, IKeyFormatter keyFormatter)
+			: base(allocator, key, keyFormatter, 4) { }
 
 		public uint Expires { get; set; }
 
@@ -28,17 +29,20 @@ namespace Enyim.Caching.Memcached.Operations
 				Total 4 bytes
 
 		*/
-		protected override IMemcachedRequest CreateRequest()
+		public void Initialize()
 		{
-			using var builder = new BinaryRequestBuilder(Allocator, Silent ? OpCode.GATQ : OpCode.GAT, 4)
+			try
 			{
-				Cas = Cas
-			};
-
-			BinaryPrimitives.WriteUInt32BigEndian(builder.GetExtra(), Expires);
-			builder.SetKey(Key);
-
-			return builder.Build();
+				BinaryPrimitives.WriteUInt32BigEndian(Request.GetExtraBuffer(), Expires);
+				Request.Operation = Silent ? OpCode.GATQ : OpCode.GAT;
+				Request.Cas = Cas;
+				Request.Commit();
+			}
+			catch
+			{
+				Request?.Dispose();
+				throw;
+			}
 		}
 	}
 }

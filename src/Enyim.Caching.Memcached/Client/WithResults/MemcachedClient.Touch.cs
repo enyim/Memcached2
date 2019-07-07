@@ -10,7 +10,9 @@ namespace Enyim.Caching.Memcached
 		{
 			try
 			{
-				var op = await PerformTouch(key, cas: 0, expiration).ConfigureAwait(false);
+				var op = PerformTouch(key, cas: 0, expiration);
+
+				await cluster.Execute(op).ConfigureAwait(false);
 
 				return new OperationResult((OperationStatus)op.StatusCode, op.Cas);
 			}

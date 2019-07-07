@@ -1,45 +1,13 @@
 ﻿using System;
-using System.Buffers;
 
 namespace Enyim
 {
-	internal static class MemoryPoolExtensions
+	public static class MemoryPoolExtensions
 	{
 		public static Span<T> Take<T>(this in Span<T> span, int length) => span.Slice(0, length);
 		public static ReadOnlySpan<T> Take<T>(this in ReadOnlySpan<T> span, int length) => span.Slice(0, length);
 		public static ReadOnlyMemory<T> Take<T>(this in ReadOnlyMemory<T> memory, int length) => memory.Slice(0, length);
 		public static Memory<T> Take<T>(this in Memory<T> memory, int length) => memory.Slice(0, length);
-
-		public static IMemoryOwner<T> RentExact<T>(this MemoryPool<T> memoryPool, int size)
-		{
-			var retval = memoryPool.Rent(size);
-			if (retval.Memory.Length > size)
-			{
-				return new ProxyOwner<T>(retval, size);
-			}
-
-			return retval;
-		}
-
-		private class ProxyOwner<T> : IMemoryOwner<T>
-		{
-			private IMemoryOwner<T> original;
-
-			public ProxyOwner(IMemoryOwner<T> original, int size)
-			{
-				this.original = original;
-				Memory = original.Memory.Slice(0, size);
-			}
-
-			public Memory<T> Memory { get; private set; }
-
-			public void Dispose()
-			{
-				original?.Dispose();
-				Memory = Memory<T>.Empty;
-				original = OwnedMemory<T>.Empty;
-			}
-		}
 	}
 }
 

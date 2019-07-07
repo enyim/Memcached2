@@ -6,7 +6,8 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class TouchOperation : BinaryItemOperation
 	{
-		public TouchOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key) : base(allocator, key) { }
+		public TouchOperation(MemoryPool<byte> allocator, string key, IKeyFormatter keyFormatter)
+			: base(allocator, key, keyFormatter, 4) { }
 
 		public Expiration Expiration { get; set; }
 
@@ -30,17 +31,22 @@ namespace Enyim.Caching.Memcached.Operations
 			returns the flags if nonzero (in 1.5.x)
 
 		*/
-		protected override IMemcachedRequest CreateRequest()
+		public void Initialize()
 		{
-			using var builder = new BinaryRequestBuilder(Allocator, OpCode.Touch, 4)
+			try
 			{
-				Cas = Cas
-			};
+				Request.Operation = OpCode.Touch;
+				Request.Cas = Cas;
 
-			BinaryPrimitives.WriteUInt32BigEndian(builder.GetExtra(), Expiration.Value);
-			builder.SetKey(Key);
+				BinaryPrimitives.WriteUInt32BigEndian(Request.GetExtraBuffer(), Expiration.Value);
 
-			return builder.Build();
+				Request.Commit();
+			}
+			catch
+			{
+				Request?.Dispose();
+				throw;
+			}
 		}
 
 		protected override bool ParseResult(BinaryResponse? response)
@@ -53,7 +59,7 @@ namespace Enyim.Caching.Memcached.Operations
 			{
 #if DEBUG
 				if (response.Body.Length == 0)
-					response.MustHave(0, false, false, false);
+					response.MustBeEmpty();
 				else
 					response.MustHave(4, true, false, false);
 #endif

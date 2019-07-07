@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Buffers.Binary;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -8,7 +7,7 @@ using System.Text;
 
 namespace Enyim.Caching.Memcached
 {
-	public class BinaryTranscoder : ITranscoder
+	public class BinaryItemFormatter : IItemFormatter
 	{
 		private const byte TRUE = 1;
 		private const byte FALSE = 0;

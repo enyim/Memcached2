@@ -12,8 +12,10 @@ namespace Enyim.Caching.Memcached
 			{
 				using var sb = new SequenceBuilder(allocator);
 
-				var flags = transcoder.Serialize(sb, value);
-				var op = await PerformStore(mode, key, flags, sb, 0, expiration, silent: true).ConfigureAwait(false);
+				var flags = itemFormatter.Serialize(sb, value);
+				var op = PerformStore(mode, key, flags, sb, 0, expiration, silent: true);
+
+				await cluster.Execute(op).ConfigureAwait(false);
 
 				return op.StatusCode == Protocol.Status.Success;
 			}

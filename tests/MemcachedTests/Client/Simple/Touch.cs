@@ -11,11 +11,11 @@ namespace Enyim.Caching.Memcached.Client
 	{
 		public TouchAsync(TheTestFixture fixture) : base(fixture) { }
 
-		public const int WaitButStillAlive = 500;
-		public const int WaitUntilExpires = 5000;
+		private const int WaitButStillAlive = 500;
+		private const int WaitUntilExpires = 6000;
 
-		static readonly Expiration DefaultExpiration = new Expiration(3);
-		static readonly Expiration NewExpiration = new Expiration(20);
+		private static readonly Expiration DefaultExpiration = new Expiration(2);
+		private static readonly Expiration NewExpiration = new Expiration(10);
 
 		[Fact, Trait("slow", "yes")]
 		public async Task When_Getting_An_Expired_Item_It_Should_Be_Null()
@@ -41,8 +41,13 @@ namespace Enyim.Caching.Memcached.Client
 			Thread.Sleep(WaitButStillAlive);
 			Assert.Equal(value, await Client.GetAndTouchAsync<string>(key, NewExpiration));
 
+			// if the new expiration is not set, the item should expire
 			Thread.Sleep(WaitUntilExpires);
 			Assert.Equal(value, await Client.GetAsync<string>(key));
+
+			// if the new expiration was set properly (and not 0), the item should expire
+			Thread.Sleep(WaitUntilExpires * 2);
+			Assert.Null(await Client.GetAsync<string>(key));
 		}
 
 		[Fact, Trait("slow", "yes")]
@@ -55,8 +60,13 @@ namespace Enyim.Caching.Memcached.Client
 			Thread.Sleep(WaitButStillAlive);
 			Assert.True(await Client.TouchAsync(key, NewExpiration), "touch failed");
 
+			// if the new expiration is not set, the item should expire
 			Thread.Sleep(WaitUntilExpires);
 			Assert.Equal(value, await Client.GetAsync<string>(key));
+
+			// if the new expiration was set properly (and not 0), the item should expire
+			Thread.Sleep(WaitUntilExpires * 2);
+			Assert.Null(await Client.GetAsync<string>(key));
 		}
 	}
 }

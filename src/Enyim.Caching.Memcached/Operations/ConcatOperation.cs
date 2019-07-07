@@ -5,17 +5,20 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class ConcatOperation : BinaryItemOperation, ICanBeSilent
 	{
-		public ConcatOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key, ConcatenationMode mode, in ReadOnlyMemory<byte> data)
-			: base(allocator, key)
+		private readonly ReadOnlyMemory<byte> data;
+
+		public ConcatOperation(MemoryPool<byte> allocator,
+								string key, IKeyFormatter keyFormatter,
+								ConcatenationMode mode,
+								in ReadOnlyMemory<byte> data)
+			: base(allocator, key, keyFormatter)
 		{
 			Mode = mode;
-			Data = data;
+			this.data = data;
 		}
 
-		public ConcatenationMode Mode { get; }
-		public ReadOnlyMemory<byte> Data { get; }
-
 		public bool Silent { get; set; }
+		public ConcatenationMode Mode { get; }
 
 		/*
 
@@ -26,17 +29,20 @@ namespace Enyim.Caching.Memcached.Operations
 			MUST have value.
 
 		*/
-		protected override IMemcachedRequest CreateRequest()
+		public void Initialize()
 		{
-			using var builder = new BinaryRequestBuilder(Allocator, Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode)
+			try
 			{
-				Cas = Cas
-			};
-
-			builder.SetKey(Key);
-			builder.GetBody().Append(Data);
-
-			return builder.Build();
+				Request.Operation = Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode;
+				Request.Cas = Cas;
+				Request.GetBody().Append(data);
+				Request.Commit();
+			}
+			catch
+			{
+				Request?.Dispose();
+				throw;
+			}
 		}
 
 		/*
@@ -57,7 +63,7 @@ namespace Enyim.Caching.Memcached.Operations
 			}
 			else
 			{
-				response.MustHave(0);
+				response.MustBeEmpty();
 			}
 
 			return false;

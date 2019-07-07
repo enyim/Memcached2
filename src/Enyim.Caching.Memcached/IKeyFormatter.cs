@@ -1,22 +1,11 @@
 ﻿using System;
 using System.Buffers;
 
-namespace Enyim
+namespace Enyim.Caching.Memcached
 {
-	internal static class OwnedMemory<T>
+	public interface IKeyFormatter
 	{
-		public static readonly IMemoryOwner<T> Empty = new EmptyOwned();
-
-		private class EmptyOwned : IMemoryOwner<T>
-		{
-			public Memory<T> Memory { get; } = Memory<T>.Empty;
-			public void Dispose() { }
-		}
-	}
-
-	internal static class OwnedMemoryExtensions
-	{
-		public static bool IsEmpty<T>(this IMemoryOwner<T>? self) => self?.Memory.IsEmpty != false;
+		void Serialize(SequenceBuilder target, string key);
 	}
 }
 

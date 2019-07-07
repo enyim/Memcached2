@@ -21,7 +21,7 @@ namespace Enyim.Caching.Tests
 
 			mockProvider.Setup(p => p.CreateLogger(It.IsAny<string>())).Returns(mockLogger.Object);
 
-			LogManager.AssignFactory(new Diagnostics.MicrosoftLoggerFactory(new LoggerFactory(new[] { mockProvider.Object })));
+			LogManager.AssignFactory(new Enyim.Diagnostics.MicrosoftLoggerFactory(new LoggerFactory(new[] { mockProvider.Object })));
 			LogManager.Create(typeof(MicrosoftLoggingAdapterTests)).Log(enyimLevel, exception, message);
 
 			// TODO capture state & formatter and validate the message

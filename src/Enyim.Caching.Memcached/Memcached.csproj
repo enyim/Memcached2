@@ -23,7 +23,9 @@
     </PackageReference>
   </ItemGroup>
 
-  <Import Project="..\Enyim\Enyim.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\Enyim.Core\Enyim.Core.csproj"  />
+  </ItemGroup>
   <Import Project="..\Enyim.Caching\Caching.projitems" Label="Shared" />
 
 </Project>

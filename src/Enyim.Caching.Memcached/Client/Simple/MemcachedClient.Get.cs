@@ -14,13 +14,13 @@ namespace Enyim.Caching.Memcached
 			=> Return<T>(PerformGetAndTouchCore(key, 0, expiration, silent: true));
 
 #nullable disable
-		private async Task<T> Return<T>(Task<Operations.GetOperation> performGet)
-			{
-			Debug.Assert(transcoder != null);
+		private async Task<T> Return<T>(Operations.GetOperationBase op)
+		{
+			Debug.Assert(itemFormatter != null);
 
 			try
 			{
-				var op = await performGet.ConfigureAwait(false);
+				await cluster.Execute(op).ConfigureAwait(false);
 
 				return ConvertResult<T>(op);
 			}
@@ -30,10 +30,10 @@ namespace Enyim.Caching.Memcached
 			}
 		}
 
-		private T ConvertResult<T>(Operations.GetOperation op)
+		private T ConvertResult<T>(Operations.GetOperationBase op)
 		{
 			Debug.Assert(op != null);
-			Debug.Assert(transcoder != null);
+			Debug.Assert(itemFormatter != null);
 
 			if (op.StatusCode == Protocol.Status.Success)
 			{
@@ -41,7 +41,7 @@ namespace Enyim.Caching.Memcached
 				Debug.Assert(data != null);
 
 				var flags = op.ResultFlags;
-				var retval = transcoder.Deserialize(data.Memory, flags);
+				var retval = itemFormatter.Deserialize(data.Memory, flags);
 
 				return (T)retval;
 			}

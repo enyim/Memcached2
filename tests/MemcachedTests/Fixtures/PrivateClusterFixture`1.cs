@@ -6,14 +6,14 @@ namespace Enyim.Caching.Memcached
 		where TServerFixture : IServerFixture, new()
 	{
 		private readonly object initLock;
-		private ICluster cluster;
+		private IMemcachedCluster cluster;
 
 		public PrivateClusterFixture()
 		{
 			initLock = new Object();
 		}
 
-		protected override ICluster GetCluster()
+		protected override IMemcachedCluster GetCluster()
 		{
 			lock (initLock)
 			{

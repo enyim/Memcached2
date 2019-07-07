@@ -13,7 +13,7 @@ namespace Enyim.Caching.Memcached.Client
 		[Fact]
 		public async Task When_Removing_A_Valid_Key_Result_Is_Successful()
 		{
-			await WithNewItem(async (key, value) =>
+			await WithNewItem(async (key, _) =>
 			{
 				Assert.True(await Client.DeleteAsync(key));
 				Assert.Null(await Client.GetAsync<object>(key));

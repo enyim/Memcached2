@@ -34,14 +34,22 @@ namespace Enyim.Caching.Memcached.Operations
 		*/
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(allocator, OpCode.Flush, When.IsNever ? (byte)0 : (byte)4);
+			const byte NoExtra = 0;
+			const byte HasExtra = 4;
+
+			var builder = new BinaryRequestBuilder(allocator, When.IsNever ? NoExtra : HasExtra)
+			{
+				Operation = OpCode.Flush
+			};
 
 			if (!When.IsNever)
 			{
-				BinaryPrimitives.WriteUInt32BigEndian(builder.GetExtra(), When.Value);
+				BinaryPrimitives.WriteUInt32BigEndian(builder.GetExtraBuffer(), When.Value);
 			}
 
-			return builder.Build();
+			builder.Commit();
+
+			return builder;
 		}
 
 		/*
@@ -61,7 +69,7 @@ namespace Enyim.Caching.Memcached.Operations
 			}
 			else
 			{
-				response.MustHave(0);
+				response.MustBeEmpty();
 			}
 
 			return false;

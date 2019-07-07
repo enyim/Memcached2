@@ -5,14 +5,28 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal abstract class BinaryItemOperation : MemcachedOperationBase, IItemOperation
 	{
-		protected BinaryItemOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key)
+		protected readonly BinaryRequestBuilder Request;
+
+		protected BinaryItemOperation(MemoryPool<byte> allocator, string key, IKeyFormatter keyFormatter, byte extraLength = 0)
 		{
 			Allocator = allocator;
-			Key = key;
+
+			try
+			{
+				Request = new BinaryRequestBuilder(allocator, extraLength);
+				Key = Request.SetKey(keyFormatter, key);
+			}
+			catch
+			{
+				Request?.Dispose();
+				throw;
+			}
 		}
 
 		protected MemoryPool<byte> Allocator { get; }
 		public ReadOnlyMemory<byte> Key { get; }
+
+		protected override IMemcachedRequest CreateRequest() => Request;
 	}
 }
 

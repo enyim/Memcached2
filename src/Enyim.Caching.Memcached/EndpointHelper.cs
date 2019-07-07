@@ -62,7 +62,6 @@ namespace Enyim.Caching.Memcached.Internal
 				.Split(new char[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
 				.Where(v => !String.IsNullOrWhiteSpace(v))
 				.Select(v => Parse(v.Trim()));
-
 	}
 }
 

@@ -5,20 +5,17 @@ namespace Enyim.Caching.Memcached
 {
 	public partial class MemcachedClient
 	{
-		private async Task<Operations.TouchOperation> PerformTouch(string key, ulong cas, Expiration expiration)
+		private Operations.TouchOperation PerformTouch(string key, ulong cas, Expiration expiration)
 		{
-			using var realKey = keyTransformer.Transform(key);
-
-			var op = new Operations.TouchOperation(allocator, realKey.Memory)
+			var retval = new Operations.TouchOperation(allocator, key, keyFormatter)
 			{
 				Cas = cas,
 				Expiration = expiration
 			};
 
-			// must wait for the operation to finish, otherwide the key would be disposed earlier than the op was ran
-			await cluster.Execute(op).ConfigureAwait(false);
+			retval.Initialize();
 
-			return op;
+			return retval;
 		}
 	}
 }

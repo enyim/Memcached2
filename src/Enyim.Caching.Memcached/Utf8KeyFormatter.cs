@@ -1,37 +1,20 @@
 ﻿using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
 
 namespace Enyim.Caching.Memcached
 {
-	public sealed class NamespacingKeyTransformer : IKeyTransformer
+	public sealed class Utf8KeyFormatter : IKeyFormatter
 	{
 		private static readonly UTF8Encoding utf8 = new UTF8Encoding(false);
 
-		private readonly MemoryPool<byte> allocator;
-		private readonly Memory<byte> prefix;
-
-		public NamespacingKeyTransformer(MemoryPool<byte> allocator, string @namespace)
+		public void Serialize(SequenceBuilder target, string key)
 		{
-			this.allocator = allocator ?? throw new ArgumentNullException(nameof(allocator));
+			KeyFormatter.ThrowIfInvalidKey(key);
 
-			prefix = utf8.GetBytes(@namespace ?? throw new ArgumentNullException(nameof(@namespace))).AsMemory();
-		}
-
-		public IMemoryOwner<byte> Transform(string key)
-		{
 			var keyLength = utf8.GetByteCount(key);
-			var retval = allocator.RentExact(prefix.Length + keyLength); // DO NOT DISPOSE!
+			var buffer = target.Request(keyLength).Span;
 
-			var ptr = retval.Memory.Span;
-
-			prefix.Span.CopyTo(ptr);
-			utf8.GetBytes(key, ptr.Slice(prefix.Length));
-
-			return retval;
+			utf8.GetBytes(key, buffer);
 		}
 	}
 }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Linq;
 
-using Enyim.Caching;
 using Enyim.Caching.Memcached;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -12,14 +9,12 @@ namespace Microsoft.Extensions.DependencyInjection
 	{
 		public SelfResolvingClientOptions(IServiceProvider services, IMemcachedClientOptions fallback)
 		{
-			Allocator = services.GetService<MemoryPool<byte>>() ?? fallback.Allocator;
-			KeyTransformer = services.GetService<IKeyTransformer>() ?? fallback.KeyTransformer;
-			Transcoder = services.GetService<ITranscoder>() ?? fallback.Transcoder;
+			KeyFormatter = services.GetService<IKeyFormatter>() ?? fallback.KeyFormatter;
+			ItemFormatter = services.GetService<IItemFormatter>() ?? fallback.ItemFormatter;
 		}
 
-		public MemoryPool<byte> Allocator { get; }
-		public IKeyTransformer KeyTransformer { get; }
-		public ITranscoder Transcoder { get; }
+		public IKeyFormatter KeyFormatter { get; }
+		public IItemFormatter ItemFormatter { get; }
 	}
 }
 

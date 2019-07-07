@@ -6,36 +6,31 @@ namespace Enyim.Caching.Memcached
 {
 	public partial class MemcachedClient
 	{
-		private async Task<Operations.GetOperation> PerformGetCore(string key, ulong cas, bool silent)
+		private Operations.GetOperationBase PerformGetCore(string key, ulong cas, bool silent)
 		{
-			using var realKey = keyTransformer.Transform(key);
-
-			var op = new Operations.GetOperation(allocator, realKey.Memory)
+			var retval = new Operations.GetOperation(allocator, key, keyFormatter)
 			{
 				Cas = cas,
 				Silent = silent
 			};
 
-			// must wait for the operation to finish, otherwide the key would be disposed earlier than the op was ran
-			await cluster.Execute(op).ConfigureAwait(false);
+			retval.Initialize();
 
-			return op;
+			return retval;
 		}
 
-		private async Task<Operations.GetOperation> PerformGetAndTouchCore(string key, ulong cas, Expiration expiration, bool silent)
+		private Operations.GetOperationBase PerformGetAndTouchCore(string key, ulong cas, Expiration expiration, bool silent)
 		{
-			using var realKey = keyTransformer.Transform(key);
-
-			var op = new Operations.GetAndTouchOperation(allocator, realKey.Memory)
+			var retval = new Operations.GetAndTouchOperation(allocator, key, keyFormatter)
 			{
+				Expires = expiration.Value,
 				Cas = cas,
 				Silent = silent
 			};
 
-			// must wait for the operation to finish, otherwide the key would be disposed earlier than the op was ran
-			await cluster.Execute(op).ConfigureAwait(false);
+			retval.Initialize();
 
-			return op;
+			return retval;
 		}
 	}
 }

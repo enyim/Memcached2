@@ -1,30 +1,21 @@
 ﻿using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Enyim.Caching.Memcached
 {
-	public sealed class AsciiKeyTransformer : IKeyTransformer
+	public interface IItemFormatter
 	{
-		private readonly MemoryPool<byte> allocator;
+		/// <summary>
+		/// Serializes an object for storing in the cache.
+		/// </summary>
+		/// <param name="value">The object to serialize</param>
+		uint Serialize(SequenceBuilder output, object? value);
 
-		public AsciiKeyTransformer(MemoryPool<byte> allocator)
-		{
-			this.allocator = allocator ?? throw new ArgumentNullException(nameof(allocator));
-		}
-
-		public IMemoryOwner<byte> Transform(string key)
-		{
-			var keyLength = Encoding.ASCII.GetByteCount(key);
-			var retval = allocator.RentExact(keyLength); // DO NOT DISPOSE!
-			var count = Encoding.ASCII.GetBytes(key, retval.Memory.Span);
-			Debug.Assert(count == keyLength);
-
-			return retval;
-		}
+		/// <summary>
+		/// Deserializes the <see cref="T:CacheItem"/> into an object.
+		/// </summary>
+		/// <param name="item">The stream that contains the data to deserialize.</param>
+		/// <returns>The deserialized object</returns>
+		object? Deserialize(ReadOnlyMemory<byte> data, uint flags);
 	}
 }
 

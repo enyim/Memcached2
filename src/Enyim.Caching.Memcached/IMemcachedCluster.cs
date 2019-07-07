@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Buffers;
 
 namespace Enyim.Caching.Memcached
 {
 	public interface IMemcachedCluster : ICluster
 	{
+		MemoryPool<byte> Allocator { get; }
 		IMemcachedClient GetClient(IMemcachedClientOptions? customOptions = null);
 	}
 }

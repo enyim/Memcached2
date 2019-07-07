@@ -3,6 +3,8 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Enyim.Caching.Memcached.Internal;
 
@@ -63,6 +65,8 @@ namespace Enyim.Caching.Memcached
 
 		private static ArgumentNullException PropertyCannotBeNull(string property)
 			=> new ArgumentNullException("options", $"Property options.{property} cannot be null");
+
+		public MemoryPool<byte> Allocator => allocator;
 
 		public IMemcachedClient GetClient(IMemcachedClientOptions? customOptions = null)
 		{

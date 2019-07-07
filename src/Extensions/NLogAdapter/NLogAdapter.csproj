@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RootNamespace>Enyim.Memcached.Diagnostics</RootNamespace>
-    <AssemblyName>Enyim.Memcached2.Diagnostics.NLog</AssemblyName>
-    <AssemblyTitle>Enyim.Memcached2.Diagnostics.NLog</AssemblyTitle>
-    <Description>Enyim.Memcached2 diagnostics logging provider using NLog 4.x</Description>
+    <RootNamespace>Enyim.Diagnostics</RootNamespace>
+    <AssemblyName>Enyim.Diagnostics.NLog</AssemblyName>
+    <AssemblyTitle>Enyim.Diagnostics.NLog</AssemblyTitle>
+    <Description>Enyim.Diagnostics logging provider using NLog 4.x</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Enyim.Caching.Memcached\Memcached.csproj" />
+    <ProjectReference Include="..\..\Enyim.Core\Enyim.Core.csproj" />
   </ItemGroup>
 
 </Project>

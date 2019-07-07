@@ -10,20 +10,8 @@ namespace Enyim.Caching
 	//-----------------------------------------------------------------------------
 	// MurmurHash3 was written by Austin Appleby, and is placed in the public
 	// domain. The author hereby disclaims copyright to this source code.
-
-	//
-	// this is exactly the same algorithm as MurmurHash3_x64_128 except
-	// we do not need all 128 bits, only 64
 	internal static class MurmurHash3
 	{
-		//public static ReadOnlySpan<byte> ComputeHash128(in ReadOnlySpan<byte> data, uint seed = 0)
-		//{
-		//	var retval = new byte[16];
-		//	ComputeHash128(data, new Span<byte>(retval), seed);
-
-		//	return retval;
-		//}
-
 		public static void ComputeHash128(in ReadOnlySpan<byte> data, in Span<byte> target, uint seed = 0)
 		{
 			var (low, high) = ComputeHash128(data, seed);

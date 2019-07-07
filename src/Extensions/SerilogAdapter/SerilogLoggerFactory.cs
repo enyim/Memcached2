@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Enyim.Caching.Diagnostics
+namespace Enyim.Diagnostics
 {
 	using SerilogLogLevel = Serilog.Events.LogEventLevel;
 	using ISerilogLogger = Serilog.ILogger;

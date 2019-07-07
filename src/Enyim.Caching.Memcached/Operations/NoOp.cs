@@ -15,16 +15,17 @@ namespace Enyim.Caching.Memcached.Operations
 
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(allocator, OpCode.NoOp);
-
-			return builder.Build();
+			return new BinaryRequestBuilder(allocator, 0)
+			{
+				Operation = OpCode.NoOp
+			};
 		}
 
 		protected override bool ParseResult(BinaryResponse? response)
 		{
 			Debug.Assert(response != null);
 
-			response.MustHave(0);
+			response.MustBeEmpty();
 			StatusCode = 0;
 
 			return false;

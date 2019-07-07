@@ -35,11 +35,15 @@ namespace Enyim.Caching.Memcached
 
 		public static implicit operator Expiration(TimeSpan validFor) => From(validFor);
 		public static implicit operator Expiration(in DateTime expiresAt) => From(expiresAt);
-		//public static implicit operator Expiration(uint value) => new Expiration(value);
-		//public static implicit operator uint(in Expiration value) => value.Value;
+
+		public static explicit operator Expiration(uint value) => new Expiration(value);
+		public static explicit operator uint(in Expiration value) => value.Value;
 
 		public static bool operator ==(in Expiration a, in Expiration b) => a.Equals(b);
 		public static bool operator !=(in Expiration a, in Expiration b) => !a.Equals(b);
+
+		public static Expiration operator +(in Expiration a, in Expiration b) => new Expiration(a.Value + b.Value);
+		public static Expiration operator -(in Expiration a, in Expiration b) => new Expiration(Math.Max(0, a.Value - b.Value));
 
 		public static Expiration From(TimeSpan validFor)
 		{
@@ -62,6 +66,7 @@ namespace Enyim.Caching.Memcached
 			if (expiresAt <= UnixEpochUtc)
 				throw new ArgumentOutOfRangeException("expiresAt must be > " + UnixEpochUtc);
 
+			// just in case someboody provides a DateTime less than 30 days away from the Epoch
 			return new Expiration((uint)(expiresAt.ToUniversalTime() - UnixEpochUtc).TotalSeconds, true);
 		}
 

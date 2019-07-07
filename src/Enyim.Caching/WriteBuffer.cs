@@ -6,7 +6,7 @@ namespace Enyim.Caching
 {
 	public sealed class WriteBuffer
 	{
-		private Memory<byte> buffer;
+		private readonly Memory<byte> buffer;
 		private int position;
 		private int remaining;
 
@@ -50,6 +50,7 @@ namespace Enyim.Caching
 
 		public Span<byte> Want(int count)
 		{
+			if (count > buffer.Length) throw new ArgumentOutOfRangeException(nameof(count), count, $"Cannot get a bigger span than the buffer size ({buffer.Length} vs {count})");
 			if (remaining < count) return Span<byte>.Empty;
 
 			var retval = buffer.Span.Slice(position, count);

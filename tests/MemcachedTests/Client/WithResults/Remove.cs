@@ -13,7 +13,7 @@ namespace Enyim.Caching.Memcached.Client
 		[Fact]
 		public async Task When_Removing_A_Valid_Key_Result_Is_Successful()
 		{
-			await WithNewItem(async (key, value) =>
+			await WithNewItem(async (key, _) =>
 			{
 				// deleted items will not return a cas value (doh)
 				AssertSuccess(await Client.DeleteWithResultAsync(key), hasCas: false);
@@ -22,7 +22,7 @@ namespace Enyim.Caching.Memcached.Client
 		}
 
 		[Fact]
-		public async Task When_Removing_A_Valid_Key_With_Cas_Result_Is_Successful()
+		public async Task When_Removing_A_Valid_Key_With_Valid_Cas_Result_Is_Successful()
 		{
 			await WithNewItem(async (key, value) =>
 			{
@@ -40,9 +40,7 @@ namespace Enyim.Caching.Memcached.Client
 		{
 			await WithNewItem(async (key, value) =>
 			{
-				var tmp = await Client.GetWithResultAsync<string>(key);
-
-				AssertFail(await Client.DeleteWithResultAsync(key, tmp.Cas - 1));
+				AssertFail(await Client.DeleteWithResultAsync(key, UInt64.MaxValue - 1));
 				AssertSuccess(await Client.GetWithResultAsync<string>(key));
 			});
 		}

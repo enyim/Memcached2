@@ -5,9 +5,8 @@ namespace Enyim.Caching.Memcached
 {
 	public interface IMemcachedClientOptions
 	{
-		MemoryPool<byte> Allocator { get; }
-		IKeyTransformer KeyTransformer { get; }
-		ITranscoder Transcoder { get; }
+		IKeyFormatter KeyFormatter { get; }
+		IItemFormatter ItemFormatter { get; }
 	}
 }
 

@@ -10,7 +10,9 @@ namespace Enyim.Caching.Memcached
 		{
 			try
 			{
-				var op = await PerformDelete(key, 0, silent: true).ConfigureAwait(false);
+				var op =  PerformDelete(key, 0, silent: true);
+
+				await cluster.Execute(op).ConfigureAwait(false);
 
 				return op.StatusCode == Protocol.Status.Success;
 			}

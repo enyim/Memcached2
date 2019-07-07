@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Buffers;
-using System.Buffers.Binary;
 
 namespace Enyim.Caching.Memcached.Operations
 {
-	internal class GetOperation : BinaryItemOperation, ICanBeSilent
+	internal class GetOperation : GetOperationBase
 	{
-		public GetOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key) : base(allocator, key) { }
-
-		public bool Silent { get; set; }
-
-		public uint ResultFlags { get; private set; }
-		public IMemoryOwner<byte> ResultData { get; private set; } = OwnedMemory<byte>.Empty;
+		public GetOperation(MemoryPool<byte> allocator, string key, IKeyFormatter keyFormatter)
+			: base(allocator, key, keyFormatter) { }
 
 		/*
 
@@ -22,60 +17,21 @@ namespace Enyim.Caching.Memcached.Operations
 			MUST NOT have value.
 
 		*/
-		protected override IMemcachedRequest CreateRequest()
+		public void Initialize()
 		{
-			using var builder = new BinaryRequestBuilder(Allocator, Silent ? OpCode.GetQ : OpCode.Get)
+			try
 			{
-				Cas = Cas
-			};
-
-			builder.SetKey(Key);
-
-			return builder.Build();
-		}
-
-		/*
-
-			Response (if found):
-
-			MUST have extras.
-			MAY have key.
-			MAY have value.
-
-		*/
-		protected override bool ParseResult(BinaryResponse? response)
-		{
-			if (response == null)
-			{
-				StatusCode = Protocol.Status.KeyNotFound;
+				Request.Operation = Silent ? OpCode.GetQ : OpCode.Get;
+				Request.Cas = Cas;
+				Request.Commit();
 			}
-			else if (response.StatusCode == Protocol.Status.Success)
+			catch
 			{
-				response.MustHave(null, extra: true, key: null, value: null);
-
-				ResultFlags = BinaryPrimitives.ReadUInt32BigEndian(response.Extra);
-				ResultData = response.CloneValue();
+				Request?.Dispose();
+				throw;
 			}
-
-			return false;
 		}
 	}
-
-	//public readonly ref struct OpRes
-	//{
-	//	public OpRes(int statusCode, ulong cas = 0, Exception? exception = null, string? message = null) : this()
-	//	{
-	//		StatusCode = statusCode;
-	//		Cas = cas;
-	//		Exception = exception;
-	//		Message = message ?? exception?.Message;
-	//	}
-
-	//	public ulong Cas { get; }
-	//	public int StatusCode { get; }
-	//	public Exception? Exception { get; }
-	//	public string? Message { get; }
-	//}
 }
 
 #region [ License information          ]

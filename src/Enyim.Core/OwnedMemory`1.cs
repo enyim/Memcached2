@@ -1,11 +1,22 @@
 ﻿using System;
 using System.Buffers;
 
-namespace Enyim.Caching.Memcached
+namespace Enyim
 {
-	public interface IKeyTransformer
+	public static class OwnedMemory<T>
 	{
-		IMemoryOwner<byte> Transform(string key);
+		public static readonly IMemoryOwner<T> Empty = new EmptyOwned();
+
+		private class EmptyOwned : IMemoryOwner<T>
+		{
+			public Memory<T> Memory { get; } = Memory<T>.Empty;
+			public void Dispose() { }
+		}
+	}
+
+	public static class OwnedMemoryExtensions
+	{
+		public static bool IsEmpty<T>(this IMemoryOwner<T>? self) => self?.Memory.IsEmpty != false;
 	}
 }
 

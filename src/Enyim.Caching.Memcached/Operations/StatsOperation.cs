@@ -22,18 +22,31 @@ namespace Enyim.Caching.Memcached.Operations
 
 		protected override IMemcachedRequest CreateRequest()
 		{
-			using var builder = new BinaryRequestBuilder(allocator, OpCode.Stat);
-
-			if (!String.IsNullOrEmpty(type))
+			var builder = new BinaryRequestBuilder(allocator, 0)
 			{
-				using var data = allocator.Rent(type.Length);
-				var span = data.Memory.Span;
-				var count = Encoding.ASCII.GetBytes(type.AsSpan(), span);
+				Operation = OpCode.Stat
+			};
 
-				builder.SetKey(span.Take(count));
+			try
+			{
+				if (!String.IsNullOrEmpty(type))
+				{
+					using var data = allocator.Rent(type.Length);
+					var span = data.Memory.Span;
+					var count = Encoding.ASCII.GetBytes(type.AsSpan(), span);
+
+					builder.SetKeyRaw(span.Take(count));
+				}
+
+				builder.Commit();
+			}
+			catch
+			{
+				builder.Dispose();
+				throw;
 			}
 
-			return builder.Build();
+			return builder;
 		}
 
 		protected override bool ParseResult(BinaryResponse? response)

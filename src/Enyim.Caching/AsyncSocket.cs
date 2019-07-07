@@ -137,21 +137,20 @@ namespace Enyim.Caching
 			if (requestBuffer == null)
 			{
 				// allocate the the buffers
-				requestMemory = allocator.RentExact(RequestBufferSize);
-				responseMemory = allocator.RentExact(ResponseBufferSize);
+				requestMemory = allocator.Rent(RequestBufferSize);
+				responseMemory = allocator.Rent(ResponseBufferSize);
 
-				requestBuffer = new WriteBuffer(requestMemory.Memory);
-				responseBuffer = new ReadBuffer(responseMemory.Memory);
+				requestBuffer = new WriteBuffer(requestMemory.Memory.Take(RequestBufferSize));
+				responseBuffer = new ReadBuffer(responseMemory.Memory.Take(ResponseBufferSize));
 
 				// setup the outgoing channel
 				requestArgs = new SocketAsyncEventArgs();
 				requestArgs.Completed += RequestSent;
-				requestArgs.SetBuffer(requestMemory.Memory);
 
 				// setup the incoming channel
 				responseArgs = new SocketAsyncEventArgs();
 				responseArgs.Completed += ResponseReceived;
-				responseArgs.SetBuffer(responseMemory.Memory);
+				responseArgs.SetBuffer(responseMemory.Memory.Take(ResponseBufferSize));
 			}
 			else
 			{

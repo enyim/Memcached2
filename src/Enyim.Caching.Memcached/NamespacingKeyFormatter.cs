@@ -7,25 +7,26 @@ using System.Text;
 
 namespace Enyim.Caching.Memcached
 {
-	public sealed class Utf8KeyTransformer : IKeyTransformer
+	public sealed class NamespacingKeyFormatter : IKeyFormatter
 	{
 		private static readonly UTF8Encoding utf8 = new UTF8Encoding(false);
 
-		private readonly MemoryPool<byte> allocator;
+		private readonly Memory<byte> prefix;
 
-		public Utf8KeyTransformer(MemoryPool<byte> allocator)
+		public NamespacingKeyFormatter(string @namespace)
 		{
-			this.allocator = allocator ?? throw new ArgumentNullException(nameof(allocator));
+			prefix = utf8.GetBytes(@namespace ?? throw new ArgumentNullException(nameof(@namespace))).AsMemory();
 		}
 
-		public IMemoryOwner<byte> Transform(string key)
+		public void Serialize(SequenceBuilder target, string key)
 		{
-			var keyLength = utf8.GetByteCount(key);
-			var retval = allocator.RentExact(keyLength); // DO NOT DISPOSE!
-			var count = utf8.GetBytes(key, retval.Memory.Span);
-			Debug.Assert(count == keyLength);
+			KeyFormatter.ThrowIfInvalidKey(key);
 
-			return retval;
+			var keyLength = prefix.Length + utf8.GetByteCount(key);
+			var buffer = target.Request(keyLength).Span;
+
+			prefix.Span.CopyTo(buffer);
+			utf8.GetBytes(key, buffer.Slice(prefix.Length));
 		}
 	}
 }

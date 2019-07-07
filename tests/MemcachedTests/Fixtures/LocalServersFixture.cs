@@ -1,22 +1,39 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Net;
 
 namespace Enyim.Caching.Memcached
 {
-	public interface ITranscoder
+	public class LocalServersFixture : IServerFixture
 	{
-		/// <summary>
-		/// Serializes an object for storing in the cache.
-		/// </summary>
-		/// <param name="value">The object to serialize</param>
-		uint Serialize(SequenceBuilder output, object? value);
+		private readonly object serverLock = new Object();
+		private MemcachedServerGroup servers;
+		private IPEndPoint[] endpoints;
 
-		/// <summary>
-		/// Deserializes the <see cref="T:CacheItem"/> into an object.
-		/// </summary>
-		/// <param name="item">The stream that contains the data to deserialize.</param>
-		/// <returns>The deserialized object</returns>
-		object? Deserialize(ReadOnlyMemory<byte> data, uint flags);
+		public IPEndPoint[] Run()
+		{
+			lock (serverLock)
+			{
+				if (servers == null)
+				{
+					servers = new MemcachedServerGroup(3);
+					endpoints = servers.Run();
+				}
+			}
+
+			return endpoints;
+		}
+
+		void IDisposable.Dispose()
+		{
+			lock (serverLock)
+			{
+				servers?.Dispose();
+				servers = null;
+			}
+		}
 	}
+
 }
 
 #region [ License information          ]

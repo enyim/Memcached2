@@ -12,7 +12,7 @@ namespace Enyim.Caching.Memcached
 		private static readonly string BasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tools");
 		private static readonly string ExePath = Path.Combine(BasePath, "memcached.exe");
 
-		private static int PortCounter = 11200;
+		private static int PortCounter = 12000;
 
 		private readonly bool verbose;
 		private readonly int maxMem;
@@ -59,10 +59,16 @@ namespace Enyim.Caching.Memcached
 
 		private void CurrentDomain_ProcessExit(object sender, EventArgs e) => Dispose();
 
+		~MemcachedServer()
+		{
+			Dispose();
+		}
+
 		public void Dispose()
 		{
 			if (process != null)
 			{
+				GC.SuppressFinalize(this);
 				try
 				{
 					using (process)

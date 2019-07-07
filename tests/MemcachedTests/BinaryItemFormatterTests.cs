@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Enyim.Caching.Memcached
 {
-	public class BinaryTranscoderTests
+	public class BinaryItemFormatterTests
 	{
 		[Theory]
 		[MemberData(nameof(DataForSerialization))]
@@ -18,11 +18,11 @@ namespace Enyim.Caching.Memcached
 
 			if (value is byte[])
 			{
-				Assert.Equal(BinaryTranscoder.RawDataFlag, flag);
+				Assert.Equal(BinaryItemFormatter.RawDataFlag, flag);
 			}
 			else
 			{
-				Assert.Equal(BinaryTranscoder.FlagPrefix, flag & BinaryTranscoder.FlagPrefix);
+				Assert.Equal(BinaryItemFormatter.FlagPrefix, flag & BinaryItemFormatter.FlagPrefix);
 				Assert.Equal(value == null ? TypeCode.DBNull : Type.GetTypeCode(value.GetType()), (TypeCode)(flag & 0xff));
 			}
 		}
@@ -32,7 +32,7 @@ namespace Enyim.Caching.Memcached
 		public void Can_Roundtrip_Deserialize(object value)
 		{
 			var source = JustSerialize(value, out var flag).AsMemory();
-			var roundtripValue = new BinaryTranscoder().Deserialize(source, flag);
+			var roundtripValue = new BinaryItemFormatter().Deserialize(source, flag);
 
 			Assert.Equal(value, roundtripValue);
 		}
@@ -60,7 +60,7 @@ namespace Enyim.Caching.Memcached
 		private byte[] JustSerialize(object value, out uint flag)
 		{
 			using var builder = new SequenceBuilder(MemoryPool<byte>.Shared);
-			var t = new BinaryTranscoder();
+			var t = new BinaryItemFormatter();
 			flag = t.Serialize(builder, value);
 
 			return builder.Commit().ToArray();

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 
-namespace Enyim.Caching.Diagnostics
+namespace Enyim.Diagnostics
 {
 	using MicrosoftLogLevel = Microsoft.Extensions.Logging.LogLevel;
 	using IMicrosoftLoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;

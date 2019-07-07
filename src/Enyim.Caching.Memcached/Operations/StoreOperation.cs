@@ -9,8 +9,8 @@ namespace Enyim.Caching.Memcached.Operations
 		private readonly uint flags;
 		private SequenceBuilder? value;
 
-		public StoreOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key, StoreMode mode, uint flags, SequenceBuilder value)
-			: base(allocator, key)
+		public StoreOperation(MemoryPool<byte> allocator, string key, IKeyFormatter keyFormatter, StoreMode mode, uint flags, SequenceBuilder value)
+			: base(allocator, key, keyFormatter, 8)
 		{
 			Mode = mode;
 			this.flags = flags;
@@ -42,27 +42,31 @@ namespace Enyim.Caching.Memcached.Operations
 				   Total 8 bytes
 
 		*/
-		protected override IMemcachedRequest CreateRequest()
+		public void Initialize()
 		{
-			using var builder = new BinaryRequestBuilder(Allocator, Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode, 8)
+			try
 			{
-				Cas = Cas
-			};
+				Request.Operation = Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode;
+				Request.Cas = Cas;
 
-			var extra = builder.GetExtra();
+				var extra = Request.GetExtraBuffer();
 
-			BinaryPrimitives.WriteUInt32BigEndian(extra, flags);
-			BinaryPrimitives.WriteUInt32BigEndian(extra.Slice(4), Expiration.Value);
+				BinaryPrimitives.WriteUInt32BigEndian(extra, flags);
+				BinaryPrimitives.WriteUInt32BigEndian(extra.Slice(4), Expiration.Value);
 
-			builder.SetKey(Key);
+				if (value != null)
+				{
+					Request.GetBody().Append(value);
+					value = default;
+				}
 
-			if (value != null)
-			{
-				builder.GetBody().Append(value);
-				value = null;
+				Request.Commit();
 			}
-
-			return builder.Build();
+			catch
+			{
+				Request?.Dispose();
+				throw;
+			}
 		}
 
 		/*
@@ -83,7 +87,7 @@ namespace Enyim.Caching.Memcached.Operations
 			}
 			else
 			{
-				response.MustHave(0);
+				response.MustBeEmpty();
 			}
 
 			return false;

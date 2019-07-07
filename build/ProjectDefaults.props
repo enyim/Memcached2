@@ -8,7 +8,7 @@
     <LangVersion>8.0</LangVersion>
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
 
     <!-- will be set to true at individual projects -->
     <IsPackable>false</IsPackable>
@@ -26,8 +26,8 @@
 
   <!-- debug -->
   <PropertyGroup>
-    <!--<EnableEnyimBuildRewritersEventSource>False</EnableEnyimBuildRewritersEventSource>-->
     <!--<EnableSourceLink>false</EnableSourceLink>-->
+    <!--<EnableEnyimBuildRewritersEventSource>False</EnableEnyimBuildRewritersEventSource>-->
     <!--<EnableEnyimBuildRewritersLogTo>False</EnableEnyimBuildRewritersLogTo>-->
   </PropertyGroup>
 

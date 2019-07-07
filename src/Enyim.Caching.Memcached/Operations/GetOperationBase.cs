@@ -1,58 +1,40 @@
 ﻿using System;
 using System.Buffers;
+using System.Buffers.Binary;
 
 namespace Enyim.Caching.Memcached.Operations
 {
-	internal class DeleteOperation : BinaryItemOperation, ICanBeSilent
+	internal abstract class GetOperationBase : BinaryItemOperation, ICanBeSilent
 	{
-		public DeleteOperation(MemoryPool<byte> allocator, string key, IKeyFormatter keyFormatter)
-			: base(allocator, key, keyFormatter)
-		{ }
+		protected GetOperationBase(MemoryPool<byte> allocator, string key, IKeyFormatter keyFormatter, byte extraLength = 0)
+			: base(allocator, key, keyFormatter, extraLength) { }
 
 		public bool Silent { get; set; }
 
-		/*
-
-			Request:
-
-			MUST NOT have extras.
-			MUST have key.
-			MUST NOT have value.
-
-		*/
-		public void Initialize()
-		{
-			try
-			{
-				Request.Operation = Silent ? OpCode.DeleteQ : OpCode.Delete;
-				Request.Cas = Cas;
-				Request.Commit();
-			}
-			catch
-			{
-				Request?.Dispose();
-				throw;
-			}
-		}
+		public uint ResultFlags { get; private set; }
+		public IMemoryOwner<byte> ResultData { get; private set; } = OwnedMemory<byte>.Empty;
 
 		/*
 
-			Response:
+			Response (if found):
 
-			MUST NOT have extras.
-			MUST NOT have key.
-			MUST NOT have value.
+			MUST have extras.
+			MAY have key.
+			MAY have value.
 
 		*/
 		protected override bool ParseResult(BinaryResponse? response)
 		{
 			if (response == null)
 			{
-				StatusCode = Protocol.Status.Success;
+				StatusCode = Protocol.Status.KeyNotFound;
 			}
-			else
+			else if (response.StatusCode == Protocol.Status.Success)
 			{
-				response.MustBeEmpty();
+				response.MustHave(null, extra: true, key: null, value: null);
+
+				ResultFlags = BinaryPrimitives.ReadUInt32BigEndian(response.Extra);
+				ResultData = response.CloneValue();
 			}
 
 			return false;

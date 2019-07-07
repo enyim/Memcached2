@@ -6,33 +6,33 @@ namespace Enyim.Caching.Memcached
 {
 	public class MemcachedClientOptions : IMemcachedClientOptions
 	{
-		private MemoryPool<byte> allocator;
-		private IKeyTransformer keyTransformer;
-		private ITranscoder transcoder;
+		//private MemoryPool<byte> allocator;
+		private IKeyFormatter keyFormatter;
+		private IItemFormatter itemFormatter;
 
 		public MemcachedClientOptions()
 		{
-			allocator = MemoryPool<byte>.Shared;
-			keyTransformer = new Utf8KeyTransformer(allocator);
-			transcoder = new BinaryTranscoder();
+			//allocator = MemoryPool<byte>.Shared;
+			keyFormatter = new Utf8KeyFormatter();
+			itemFormatter = new BinaryItemFormatter();
 		}
 
-		public MemoryPool<byte> Allocator
+		//public MemoryPool<byte> Allocator
+		//{
+		//	get => allocator;
+		//	set => allocator = value ?? throw PropertyCannotBeNull();
+		//}
+
+		public IKeyFormatter KeyFormatter
 		{
-			get => allocator;
-			set => allocator = value ?? throw PropertyCannotBeNull();
+			get => keyFormatter;
+			set => keyFormatter = value ?? throw PropertyCannotBeNull();
 		}
 
-		public IKeyTransformer KeyTransformer
+		public IItemFormatter ItemFormatter
 		{
-			get => keyTransformer;
-			set => keyTransformer = value ?? throw PropertyCannotBeNull();
-		}
-
-		public ITranscoder Transcoder
-		{
-			get => transcoder;
-			set => transcoder = value ?? throw PropertyCannotBeNull();
+			get => itemFormatter;
+			set => itemFormatter = value ?? throw PropertyCannotBeNull();
 		}
 
 		private static ArgumentNullException PropertyCannotBeNull([CallerMemberName] string? property = null)

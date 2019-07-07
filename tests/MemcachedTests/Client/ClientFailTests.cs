@@ -4,19 +4,20 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xunit;
 using Moq;
+using System.Buffers;
 
 namespace Enyim.Caching.Memcached
 {
-	public partial class ClientFailTests : TestBase, IClassFixture<SharedLocalServersFixture>
+	public partial class ClientFailTests : TestBase, IClassFixture<LocalServersFixture>
 	{
-		private readonly SharedLocalServersFixture fixture;
+		private readonly LocalServersFixture fixture;
 
-		public ClientFailTests(SharedLocalServersFixture fixture)
+		public ClientFailTests(LocalServersFixture fixture)
 		{
 			this.fixture = fixture;
 		}
 
-		private ICluster GetCustomCluster()
+		private IMemcachedCluster GetCustomCluster()
 		{
 			// operations being tested in this class are expected to fail early without bringing their node down
 			// the mockInstance will throw if one of the nodes become dead
@@ -43,7 +44,7 @@ namespace Enyim.Caching.Memcached
 		}
 
 		[Fact]
-		public async Task Should_Throw_SerializationException_When_TranscoderFails()
+		public async Task Should_Throw_SerializationException_When_ItemFormatterFails()
 		{
 			using var cluster = GetCustomCluster();
 			var client = new MemcachedClient(cluster);
@@ -54,7 +55,7 @@ namespace Enyim.Caching.Memcached
 		[Fact]
 		public void Client_Should_Only_Work_With_Started_Server()
 		{
-			var mockCluster = new Mock<ICluster>();
+			var mockCluster = new Mock<IMemcachedCluster>();
 			mockCluster.SetupGet(c => c.IsStarted).Returns(false);
 
 			var e = Assert.Throws<ArgumentException>(() => new MemcachedClient(mockCluster.Object, new MemcachedClientOptions()));
@@ -69,14 +70,15 @@ namespace Enyim.Caching.Memcached
 			static Exception AssertException(Action<Mock<IMemcachedClientOptions>> extraSetup)
 			{
 				var defaultOptions = new MemcachedClientOptions();
-				var mockCluster = new Mock<ICluster>();
+				var mockCluster = new Mock<IMemcachedCluster>();
+
 				mockCluster.SetupGet(c => c.IsStarted).Returns(true);
+				mockCluster.SetupGet(c => c.Allocator).Returns(MemoryPool<byte>.Shared);
 
 				var mockOptions = new Mock<IMemcachedClientOptions>(MockBehavior.Strict);
 
-				mockOptions.SetupGet(o => o.Allocator).Returns(defaultOptions.Allocator);
-				mockOptions.SetupGet(o => o.KeyTransformer).Returns(defaultOptions.KeyTransformer);
-				mockOptions.SetupGet(o => o.Transcoder).Returns(defaultOptions.Transcoder);
+				mockOptions.SetupGet(o => o.KeyFormatter).Returns(defaultOptions.KeyFormatter);
+				mockOptions.SetupGet(o => o.ItemFormatter).Returns(defaultOptions.ItemFormatter);
 
 				extraSetup?.Invoke(mockOptions);
 
@@ -85,14 +87,11 @@ namespace Enyim.Caching.Memcached
 
 			Exception e;
 
-			e = AssertException(mock => mock.SetupGet(o => o.Allocator).Returns(() => null));
-			Assert.Contains(nameof(IMemcachedClientOptions.Allocator), e.Message);
+			e = AssertException(mock => mock.SetupGet(o => o.KeyFormatter).Returns(() => null));
+			Assert.Contains(nameof(IMemcachedClientOptions.KeyFormatter), e.Message);
 
-			e = AssertException(mock => mock.SetupGet(o => o.KeyTransformer).Returns(() => null));
-			Assert.Contains(nameof(IMemcachedClientOptions.KeyTransformer), e.Message);
-
-			e = AssertException(mock => mock.SetupGet(o => o.Transcoder).Returns(() => null));
-			Assert.Contains(nameof(IMemcachedClientOptions.Transcoder), e.Message);
+			e = AssertException(mock => mock.SetupGet(o => o.ItemFormatter).Returns(() => null));
+			Assert.Contains(nameof(IMemcachedClientOptions.ItemFormatter), e.Message);
 
 			Mock.Verify();
 		}

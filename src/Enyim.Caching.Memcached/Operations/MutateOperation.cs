@@ -7,8 +7,8 @@ namespace Enyim.Caching.Memcached.Operations
 {
 	internal class MutateOperation : BinaryItemOperation, ICanBeSilent
 	{
-		public MutateOperation(MemoryPool<byte> allocator, in ReadOnlyMemory<byte> key, MutationMode mode, ulong delta, ulong defaultValue)
-			: base(allocator, key)
+		public MutateOperation(MemoryPool<byte> allocator, string key, IKeyFormatter keyFormatter, MutationMode mode, ulong delta, ulong defaultValue)
+			: base(allocator, key, keyFormatter, 20)
 		{
 			Mode = mode;
 			Delta = delta;
@@ -48,24 +48,28 @@ namespace Enyim.Caching.Memcached.Operations
 			   +---------------+---------------+---------------+---------------+
 			   Total 20 bytes
 
-		 */
-		protected override IMemcachedRequest CreateRequest()
+		*/
+
+		public void Initialize()
 		{
-			using var builder = new BinaryRequestBuilder(Allocator, Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode, 20)
+			try
 			{
-				Cas = Cas
-			};
+				Request.Operation = Silent ? Protocol.ToSilent((OpCode)Mode) : (OpCode)Mode;
+				Request.Cas = Cas;
 
-			// store the extra values
-			var extra = builder.GetExtra();
+				var extra = Request.GetExtraBuffer();
 
-			BinaryPrimitives.WriteUInt64BigEndian(extra, Delta);
-			BinaryPrimitives.WriteUInt64BigEndian(extra.Slice(8), DefaultValue);
-			BinaryPrimitives.WriteUInt32BigEndian(extra.Slice(16), Expiration.Value);
+				BinaryPrimitives.WriteUInt64BigEndian(extra, Delta);
+				BinaryPrimitives.WriteUInt64BigEndian(extra.Slice(8), DefaultValue);
+				BinaryPrimitives.WriteUInt32BigEndian(extra.Slice(16), Expiration.Value);
 
-			builder.SetKey(Key);
-
-			return builder.Build();
+				Request.Commit();
+			}
+			catch
+			{
+				Request?.Dispose();
+				throw;
+			}
 		}
 
 		/*

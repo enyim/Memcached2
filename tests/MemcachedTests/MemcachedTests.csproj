@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Enyim.Caching.Memcached\Memcached.csproj" />
+    <ProjectReference Include="..\..\src\Enyim.Core\Enyim.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

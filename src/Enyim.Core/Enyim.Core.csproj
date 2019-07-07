@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RootNamespace>Enyim</RootNamespace>
+    <AssemblyName>Enyim.Core</AssemblyName>
+    <AssemblyTitle>Enyim.Core</AssemblyTitle>
+    <Description>Core classes for all Enyim.* libraries</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+</Project>

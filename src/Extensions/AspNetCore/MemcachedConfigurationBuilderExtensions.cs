@@ -123,30 +123,30 @@ namespace Microsoft.Extensions.DependencyInjection
 			return builder;
 		}
 
-		public static IMemcachedConfigurationBuilder UseKeyTransformer<TService>(this IMemcachedConfigurationBuilder builder)
-			where TService : class, IKeyTransformer
+		public static IMemcachedConfigurationBuilder UseKeyFormatter<TService>(this IMemcachedConfigurationBuilder builder)
+			where TService : class, IKeyFormatter
 		{
-			builder.Services.AddTransient<IKeyTransformer, TService>();
+			builder.Services.AddTransient<IKeyFormatter, TService>();
 
 			return builder;
 		}
 
-		public static IMemcachedConfigurationBuilder UseKeyTransformer(this IMemcachedConfigurationBuilder builder, Func<IServiceProvider, IKeyTransformer> implementationFactory)
+		public static IMemcachedConfigurationBuilder UseKeyFormatter(this IMemcachedConfigurationBuilder builder, Func<IServiceProvider, IKeyFormatter> implementationFactory)
 		{
 			builder.Services.AddTransient(implementationFactory);
 
 			return builder;
 		}
 
-		public static IMemcachedConfigurationBuilder UseTranscoder<TService>(this IMemcachedConfigurationBuilder builder)
-			where TService : class, ITranscoder
+		public static IMemcachedConfigurationBuilder UseItemFormatter<TService>(this IMemcachedConfigurationBuilder builder)
+			where TService : class, IItemFormatter
 		{
-			builder.Services.AddTransient<ITranscoder, TService>();
+			builder.Services.AddTransient<IItemFormatter, TService>();
 
 			return builder;
 		}
 
-		public static IMemcachedConfigurationBuilder UseTranscoder(this IMemcachedConfigurationBuilder builder, Func<IServiceProvider, ITranscoder> implementationFactory)
+		public static IMemcachedConfigurationBuilder UseItemFormatter(this IMemcachedConfigurationBuilder builder, Func<IServiceProvider, IItemFormatter> implementationFactory)
 		{
 			builder.Services.AddTransient(implementationFactory);
 

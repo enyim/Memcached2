@@ -6,24 +6,21 @@ namespace Enyim.Caching.Memcached
 {
 	public partial class MemcachedClient
 	{
-		private async Task<Operations.MutateOperation> PerformMutate(
+		private Operations.MutateOperation PerformMutate(
 			MutationMode mode, string key,
 			ulong delta, ulong defaultValue,
 			ulong cas, Expiration expiration, bool silent)
 		{
-			using var realKey = keyTransformer.Transform(key);
-
-			var op = new Operations.MutateOperation(allocator, realKey.Memory, mode, delta, defaultValue)
+			var retval = new Operations.MutateOperation(allocator, key, keyFormatter, mode, delta, defaultValue)
 			{
 				Cas = cas,
 				Expiration = expiration,
 				Silent = silent
 			};
 
-			// must wait for the operation to finish, otherwide the key would be disposed earlier than the op was ran
-			await cluster.Execute(op).ConfigureAwait(false);
+			retval.Initialize();
 
-			return op;
+			return retval;
 		}
 	}
 }

@@ -57,7 +57,6 @@ namespace Enyim.Caching.Memcached
 			Mock.Verify();
 		}
 
-
 		[Fact]
 		public async Task Default_Client_Should_Be_Cached()
 		{
@@ -77,12 +76,8 @@ namespace Enyim.Caching.Memcached
 			await Task.WhenAll(tasks);
 
 			Assert.Equal(COUNT, set.Count);
-
-			var tmp = set.Distinct().ToArray();
-			Assert.Equal(1, tmp.Length);
-
+			Assert.Single(set.Distinct());
 		}
-
 	}
 }
 

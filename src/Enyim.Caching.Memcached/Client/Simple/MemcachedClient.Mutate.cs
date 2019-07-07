@@ -10,7 +10,9 @@ namespace Enyim.Caching.Memcached
 		{
 			try
 			{
-				var op = await PerformMutate(mode, key, delta, defaultValue, cas: 0, expiration, silent: false).ConfigureAwait(false);
+				var op = PerformMutate(mode, key, delta, defaultValue, cas: 0, expiration, silent: false);
+
+				await cluster.Execute(op).ConfigureAwait(false);
 
 				return op.StatusCode == Protocol.Status.Success
 						? (ulong?)op.ResultValue
