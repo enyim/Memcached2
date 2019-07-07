@@ -296,7 +296,7 @@ If no `NLog.LogFactory` is passed to the constructor the default `NLog.LogManage
 Requires a Nuget package:
 
 ``` shell
-dotnet add package Enyim.Diagnostics.NLog --version 0.6.0-preview
+dotnet add package Enyim.Diagnostics.ExtensionsLogging --version 0.6.0-preview
 ```
 
 Usage:
