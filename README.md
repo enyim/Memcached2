@@ -20,7 +20,7 @@ dotnet add package Enyim.Memcached2 --version 0.6.0-preview
 ### PackageReference
 
 ``` xml
-<PackageReference Include="EntityFramework" Version="0.6.0-preview" />
+<PackageReference Include="Enyim.Memcached2" Version="0.6.0-preview" />
 ```
 
 # Usage
