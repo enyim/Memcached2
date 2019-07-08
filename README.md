@@ -117,9 +117,9 @@ Defaults to `MemoryPool<byte>.Shared`.
 
 ## Locator
 
-Implement the INodeLocator interface to define how the items (keys) are mapped to the Memcached servers in the cluster.
+Implement the `INodeLocator` interface to define how the items (keys) are mapped to the Memcached servers in the cluster.
 
-The default `DefaultNodeLocator` uses Ketama consistent hashing with [Murmurhash3](https://github.com/aappleby/smhasher/wiki/MurmurHash3) as its hash function.
+The default `DefaultNodeLocator` uses Ketama consistent hashing with a [Murmurhash3](https://github.com/aappleby/smhasher/wiki/MurmurHash3) hash function.
 
 ## ReconnectPolicyFactory
 
