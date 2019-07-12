@@ -112,7 +112,6 @@ namespace Enyim.Diagnostics
 				};
 
 				Console.Write(DateTime.Now.ToString("HH:mm:ss.fffff", CultureInfo.InvariantCulture));
-				Console.Write(" [");
 
 				Console.Write(level switch
 				{
