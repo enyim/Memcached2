@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.ComponentModel;
 
 namespace Enyim.Caching
 {
@@ -14,7 +13,7 @@ namespace Enyim.Caching
 	{
 #pragma warning disable CS0649 // field will be initialized by the LogTo rewriter
 		private static readonly ILogger logger;
-#pragma warning enable CS0649
+#pragma warning restore CS0649
 
 		private readonly IPEndPoint[] endpoints;
 		private readonly INodeLocator locator;

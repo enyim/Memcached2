@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -13,7 +14,6 @@ namespace Enyim.Caching.Memcached
 		public Task<T> GetAndTouchAsync<T>(string key, in Expiration expiration)
 			=> Return<T>(PerformGetAndTouchCore(key, 0, expiration, silent: true));
 
-#nullable disable
 		private async Task<T> Return<T>(Operations.GetOperationBase op)
 		{
 			Debug.Assert(itemFormatter != null);
@@ -30,6 +30,7 @@ namespace Enyim.Caching.Memcached
 			}
 		}
 
+		[return: MaybeNull]
 		private T ConvertResult<T>(Operations.GetOperationBase op)
 		{
 			Debug.Assert(op != null);
@@ -49,7 +50,6 @@ namespace Enyim.Caching.Memcached
 			return default;
 		}
 	}
-#nullable enable
 
 	public static partial class MemcachedClientExtensions
 	{

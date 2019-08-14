@@ -6,11 +6,6 @@
   <Import Project="$(MSBuildThisFileDirectory)..\build\SignAssembly.props" />
   <Import Project="$(MSBuildThisFileDirectory)..\build\Nuget.props" />
 
-  <PropertyGroup>
-    <Nullable>enable</Nullable>
-    <NullableContextOptions>enable</NullableContextOptions>
-  </PropertyGroup>
-
 </Project>
 
 

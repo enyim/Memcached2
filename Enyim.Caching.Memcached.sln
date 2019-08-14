@@ -32,7 +32,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{218B1FD8-A85B-43F2-89CA-1AB772F85451}"
 	ProjectSection(SolutionItems) = preProject
 		build\Clean.targets = build\Clean.targets
-		build\FixSourceLink.targets = build\FixSourceLink.targets
 		build\Nuget.props = build\Nuget.props
 		build\Nuget.targets = build\Nuget.targets
 		build\ProjectDefaults.props = build\ProjectDefaults.props
@@ -68,7 +67,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWebApp", "samples\Sam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore", "src\Extensions\AspNetCore\AspNetCore.csproj", "{8BBF90AE-D88D-41DD-AB44-D4EE25879D4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enyim.Core", "src\Enyim.Core\Enyim.Core.csproj", "{B243C8CD-B829-4110-B336-1858BE04E61F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enyim.Core", "src\Enyim.Core\Enyim.Core.csproj", "{B243C8CD-B829-4110-B336-1858BE04E61F}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Enyim.Core\Enyim.Core.csproj"  />
+    <ProjectReference Include="..\Enyim.Core\Enyim.Core.csproj" />
   </ItemGroup>
   <Import Project="..\Enyim.Caching\Caching.projitems" Label="Shared" />
 

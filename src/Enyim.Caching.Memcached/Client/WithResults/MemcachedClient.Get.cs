@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -13,7 +14,6 @@ namespace Enyim.Caching.Memcached
 		public Task<OperationResult<T>> GetAndTouchWithResultAsync<T>(string key, in Expiration expiration, ulong cas = 0)
 			=> ReturnWithResult<T>(PerformGetAndTouchCore(key, cas, expiration, silent: false));
 
-#nullable disable
 		private async Task<OperationResult<T>> ReturnWithResult<T>(Operations.GetOperationBase op)
 		{
 			Debug.Assert(itemFormatter != null);
@@ -40,7 +40,6 @@ namespace Enyim.Caching.Memcached
 			}
 		}
 	}
-#nullable enable
 }
 
 #region [ License information          ]

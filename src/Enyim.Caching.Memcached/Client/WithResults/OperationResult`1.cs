@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -11,16 +12,14 @@ namespace Enyim.Caching.Memcached
 
 		public OperationResult(Exception exception)
 		{
-#nullable disable
 			Value = default;
-#nullable enable
 			this.statusCode = OperationStatus.InternalError;
 			Cas = 0;
 			Exception = exception;
 			isInitialized = true;
 		}
 
-		public OperationResult(T value, OperationStatus statusCode, ulong cas)
+		public OperationResult([MaybeNull]T value, OperationStatus statusCode, ulong cas)
 		{
 			Value = value;
 			this.statusCode = statusCode;
@@ -29,6 +28,7 @@ namespace Enyim.Caching.Memcached
 			isInitialized = true;
 		}
 
+		[MaybeNull][AllowNull]
 		public T Value { get; }
 		public OperationStatus StatusCode => isInitialized ? statusCode : OperationStatus.InternalError;
 		public ulong Cas { get; }
@@ -36,20 +36,20 @@ namespace Enyim.Caching.Memcached
 
 		public bool Success => StatusCode == Protocol.Status.Success;
 
-		public void Deconstruct(out T value, out ulong cas)
+		public void Deconstruct([MaybeNull]out T value, out ulong cas)
 		{
 			value = Value;
 			cas = Cas;
 		}
 
-		public void Deconstruct(out T value, out ulong cas, out OperationStatus statusCode)
+		public void Deconstruct([MaybeNull]out T value, out ulong cas, out OperationStatus statusCode)
 		{
 			value = Value;
 			cas = Cas;
 			statusCode = StatusCode;
 		}
 
-		public void Deconstruct(out T value, out ulong cas, out OperationStatus statusCode, out Exception? exception)
+		public void Deconstruct([MaybeNull]out T value, out ulong cas, out OperationStatus statusCode, out Exception? exception)
 		{
 			value = Value;
 			cas = Cas;

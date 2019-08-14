@@ -13,7 +13,7 @@ namespace Enyim.Caching
 	{
 #pragma warning disable CS0649 // field will be initialized by the LogTo rewriter
 		private static readonly ILogger logger;
-#pragma warning enable CS0649
+#pragma warning restore CS0649
 
 		private readonly ICluster owner;
 		private readonly IPEndPoint endpoint;

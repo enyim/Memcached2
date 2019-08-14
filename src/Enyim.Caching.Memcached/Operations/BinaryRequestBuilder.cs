@@ -70,7 +70,7 @@ namespace Enyim.Caching.Memcached.Operations
 
 #pragma warning disable CS0649
 		public readonly ushort Reserved; // field kept for completeness sake
-#pragma warning enable CS0649
+#pragma warning restore CS0649
 
 		/// <summary>
 		/// Order: SetKey, GetExtra, GetBody

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Enyim
 {
 	internal static class Require
 	{
+		[DoesNotReturn]
 		public static void That(bool valid, string message, [CallerMemberName] string? name = null)
 		{
 			if (!valid)

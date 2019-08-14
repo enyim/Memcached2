@@ -33,7 +33,7 @@ namespace Enyim.Caching
 	}
 }
 
-#pragma warning enable RCS1163, RCS1057, IDE0060
+#pragma warning restore RCS1163, RCS1057, IDE0060
 
 #region [ License information          ]
 

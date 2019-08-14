@@ -23,13 +23,11 @@ namespace Enyim.Caching.Memcached
 			var successful = (await WhenAllUnfailed(tasks).ConfigureAwait(false)).ToHashSet();
 			var retval = new MemcachedStats();
 
-#pragma warning disable CS8619
 			foreach (var (node, op) in ops)
 			{
 				if (successful.Contains(op))
 					retval.Set(node.EndPoint, op.Stats);
 			}
-#pragma warning enable CS8619
 
 			return retval;
 		}
