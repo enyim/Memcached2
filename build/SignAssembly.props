@@ -2,10 +2,7 @@
 <Project>
   <PropertyGroup>
     <DelaySign>false</DelaySign>
-    <DelaySign Condition=" '$(Configuration)' == 'Release' ">true</DelaySign>
-
     <AssemblyOriginatorKeyFileName>enyim.snk</AssemblyOriginatorKeyFileName>
-    <AssemblyOriginatorKeyFileName Condition=" '$(DelaySign)' == 'true' ">enyim_public.snk</AssemblyOriginatorKeyFileName>
 
     <AssemblyOriginatorKeyFile Condition=" Exists('$(MSBuildThisFileDirectory)$(AssemblyOriginatorKeyFileName)') ">$(MSBuildThisFileDirectory)$(AssemblyOriginatorKeyFileName)</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyFile Condition=" Exists('$(MSBuildThisFileDirectory)..\$(AssemblyOriginatorKeyFileName)') ">$(MSBuildThisFileDirectory)..\$(AssemblyOriginatorKeyFileName)</AssemblyOriginatorKeyFile>

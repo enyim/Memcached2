@@ -13,11 +13,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enyim.Build.Rewriters.EventSource" Version="0.8.4">
+    <PackageReference Include="Enyim.Build.Rewriters.EventSource" Version="0.8.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Enyim.Build.Rewriters.LogTo" Version="0.8.4">
+    <PackageReference Include="Enyim.Build.Rewriters.LogTo" Version="0.8.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
