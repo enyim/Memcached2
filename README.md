@@ -6,8 +6,8 @@ A fully async, pipelining, high-performance [Memcached](https://memcached.org/) 
 
 ## Limitations
 
-- Only the binary protocol is supporrted (unless using a very old Memcached server, this should not be a blocker)
-- Uses `Memory<T>`/`Span<T>`, so currently it only runs on .NET Core 3.0 (netstandard2.1)
+- Only the binary protocol is supported (unless using a very old Memcached server, this should not be a blocker)
+- Uses `Memory<T>`/`Span<T>`, so currently it only runs on .NET Core 3+ (netstandard2.1)
 
 # Installation
 
@@ -244,7 +244,7 @@ The default `BinaryItemFormatter` serializes items the following way:
 
 The client supports emitting its diagnostics messages to the Console or some of the popular logging libraries. (Internal logging is disabled if no diagnostics logger is installed.)
 
-The logger musy be installed before creating the CLuster:
+The logger must be installed before creating the Cluster:
 ``` csharp
 var factory = ...;
 Enyim.LogManager.AssignFactory(factory);
