@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-#if NETSTANDARD2_0
+#if (NETSTANDARD2_0 || NET471 || NET472 || NET48)
 using Caching;
 #endif
 

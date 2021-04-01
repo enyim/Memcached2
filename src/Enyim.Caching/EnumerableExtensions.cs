@@ -5,7 +5,7 @@ namespace Caching
 {
     public static class EnumerableExtensions
     {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NET471 || NET472 || NET48
 		public static HashSet<TSource> ToHashSet<TSource>(this IEnumerable<TSource> source)
 		    => source.ToHashSet(null!);
 

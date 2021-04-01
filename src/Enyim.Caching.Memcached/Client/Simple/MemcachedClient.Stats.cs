@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-#if NETSTANDARD2_0
+
+#if (NETSTANDARD2_0 || NET471 || NET472 || NET48)
 using Caching;
 #endif
 

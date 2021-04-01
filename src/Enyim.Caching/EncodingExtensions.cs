@@ -6,7 +6,7 @@ namespace Caching
 {
 	public static class EncodingExtensions
 	{
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NET471 || NET472 || NET48
 		public static int GetBytes<T>(this T encoding, string chars, Span<byte> bytes)
 			where T : Encoding
 		{
