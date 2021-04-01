@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <RootNamespace>Enyim.Caching.Tests</RootNamespace>
     <AssemblyName>Enyim.Caching.Tests.MemcachedTests</AssemblyName>
   </PropertyGroup>
@@ -10,7 +10,7 @@
     <ProjectReference Include="..\..\src\Enyim.Caching.Memcached\Memcached.csproj" />
     <ProjectReference Include="..\..\src\Enyim.Core\Enyim.Core.csproj" />
   </ItemGroup>
-
+  <!--<Import Project="..\..\src\Enyim.Caching\Caching.projitems" Label="Shared" />-->
   <ItemGroup>
     <None Update="Tools\default_engine.so">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -14,7 +14,7 @@ namespace Enyim.Caching
 
 			return target;
 		}
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NET472 || NET471 || NET48
 		public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey,TValue> kvp, out TKey key, out TValue value)
 		{
 			key = kvp.Key;

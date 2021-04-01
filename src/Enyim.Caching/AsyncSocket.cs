@@ -262,10 +262,10 @@ namespace Enyim.Caching
 			// OS sent less data than we asked for, so send the remaining data
 			if (requestArgs.Count > sent)
 			{
-#if !NETSTANDARD2_0
-				PerformSend(requestArgs.MemoryBuffer.Slice(sent));
-#else
+#if NETSTANDARD2_0 || NET471 || NET472 || NET48
 				PerformSend(requestArgs.Buffer.AsMemory().Slice(sent));
+#else
+				PerformSend(requestArgs.MemoryBuffer.Slice(sent));
 #endif
 			}
 			else

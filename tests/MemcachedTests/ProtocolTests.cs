@@ -48,8 +48,10 @@ namespace Enyim.Caching.Memcached
 									.Cast<OpCode>()
 									.ToDictionary(o => o.ToString(), o => (int)o);
 
-				foreach (var (name, op) in values)
+				foreach (var kvp in values)
 				{
+					var (name, op) = (kvp.Key, kvp.Value);
+
 					if (!name.EndsWith("Q")
 						&& values.TryGetValue(name + "Q", out var silent))
 					{

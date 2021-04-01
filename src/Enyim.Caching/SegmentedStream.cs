@@ -19,7 +19,7 @@ namespace Enyim.Caching
 
 		public override void WriteByte(byte value) => builder.Request(1).Span[0] = value;
 		public override void Write(byte[] buffer, int offset, int count) => new Span<byte>(buffer, offset, count).CopyTo(builder.Request(count).Span);
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1
 		public override void Write(ReadOnlySpan<byte> buffer) => buffer.CopyTo(builder.Request(buffer.Length).Span);
 #endif
 		public override void Flush() { }
@@ -37,26 +37,26 @@ namespace Enyim.Caching
 			set => throw new NotSupportedException();
 		}
 
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1
 		public override void CopyTo(Stream destination, int bufferSize) => throw new NotSupportedException();
 #endif
 		public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken) => throw new NotSupportedException();
 
 		public override int ReadByte() => throw new NotSupportedException();
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1
 		public override int Read(Span<byte> buffer) => throw new NotSupportedException();
 #endif
 		public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 		public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state) => throw new NotSupportedException();
 		public override int EndRead(IAsyncResult asyncResult) => throw new NotSupportedException();
 		public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => throw new NotSupportedException();
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1
 		public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 #endif
 		public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state) => throw new NotSupportedException();
 		public override void EndWrite(IAsyncResult asyncResult) => throw new NotSupportedException();
 		public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => throw new NotSupportedException();
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1
 		public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 #endif
 		public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
@@ -64,7 +64,7 @@ namespace Enyim.Caching
 
 		public override void Close() { }
 		protected override void Dispose(bool disposing) { }
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1
 		public override ValueTask DisposeAsync() => new ValueTask();
 #endif
 #endregion
