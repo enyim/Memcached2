@@ -15,9 +15,14 @@ namespace Enyim.Caching
 		public static void ComputeHash128(in ReadOnlySpan<byte> data, in Span<byte> target, uint seed = 0)
 		{
 			var (low, high) = ComputeHash128(data, seed);
+#if !NETSTANDARD2_0
 			var a = BitConverter.TryWriteBytes(target, high);
 			var b = BitConverter.TryWriteBytes(target, low);
+#else
+			var a = BitConverter.GetBytes(high).AsSpan().TryCopyTo(target);
+			var b = BitConverter.GetBytes(low).AsSpan().TryCopyTo(target);
 
+#endif
 			Debug.Assert(a && b);
 		}
 

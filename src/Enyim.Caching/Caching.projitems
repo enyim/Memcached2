@@ -12,6 +12,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)AsyncSocket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ClusterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ClusterExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EncodingExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumerableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ICluster.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IFailurePolicy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IFailurePolicyFactory.cs" />
@@ -33,12 +35,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)NodeBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NodePerformanceMonitor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NodeQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NullableAttributes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReadBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Require.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SegmentedStream.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SerializationException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SequenceBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SequenceBuilder.Segment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SocketAsyncEventArgsExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SocketOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tracing\AsyncSocketEventSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tracing\NodeBase.cs" />

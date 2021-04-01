@@ -71,6 +71,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enyim.Core", "src\Enyim.Cor
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\Enyim.Caching\Caching.projitems*{74e8d5fa-1e1e-49c0-a2e7-8266375418fe}*SharedItemsImports = 5
 		src\Enyim.Caching\Caching.projitems*{9596b249-9ee2-4f7f-bc47-cdbf7794a7c9}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

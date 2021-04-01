@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+#if NETSTANDARD2_0
+using Caching;
+#endif
+
 namespace Enyim.Caching.Memcached.Operations
 {
 	internal class StatsOperation : MemcachedOperationBase

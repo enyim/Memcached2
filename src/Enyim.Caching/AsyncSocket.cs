@@ -262,7 +262,11 @@ namespace Enyim.Caching
 			// OS sent less data than we asked for, so send the remaining data
 			if (requestArgs.Count > sent)
 			{
+#if !NETSTANDARD2_0
 				PerformSend(requestArgs.MemoryBuffer.Slice(sent));
+#else
+				PerformSend(requestArgs.Buffer.AsMemory().Slice(sent));
+#endif
 			}
 			else
 			{
@@ -332,7 +336,7 @@ namespace Enyim.Caching
 
 		private static int ToTimeout(TimeSpan time) => time == TimeSpan.MaxValue ? Timeout.Infinite : (int)time.TotalMilliseconds;
 
-		#region [ Property noise               ]
+#region [ Property noise               ]
 
 		public bool IsAlive
 		{
@@ -415,8 +419,8 @@ namespace Enyim.Caching
 			}
 		}
 
-		#endregion
-		#region [ Cleanup                      ]
+#endregion
+#region [ Cleanup                      ]
 
 		public void Dispose()
 		{
@@ -465,7 +469,7 @@ namespace Enyim.Caching
 			}
 		}
 
-		#endregion
+#endregion
 	}
 }
 

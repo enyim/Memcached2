@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+#if NETSTANDARD2_0
+using Caching;
+#endif
 
 namespace Enyim.Caching.Memcached
 {
