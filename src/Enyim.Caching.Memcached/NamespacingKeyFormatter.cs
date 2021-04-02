@@ -5,6 +5,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
+#if (NETSTANDARD2_0 || NET471 || NET472 || NET48)
+using Caching;
+#endif
+
 namespace Enyim.Caching.Memcached
 {
 	public sealed class NamespacingKeyFormatter : IKeyFormatter

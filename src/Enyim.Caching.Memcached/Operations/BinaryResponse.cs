@@ -4,6 +4,10 @@ using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Text;
 
+#if NETSTANDARD2_0 || NET471 || NET472 || NET48
+using Caching;
+#endif
+
 namespace Enyim.Caching.Memcached.Operations
 {
 	internal sealed class BinaryResponse : IResponse

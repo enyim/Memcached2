@@ -18,8 +18,11 @@ namespace Enyim.Caching.Memcached.Client
 
 			value[0] = 100;
 			value[value.Length / 2] = 100;
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
 			value[^1] = 100;
-
+#else
+			value[value.Length - 1] = 100;
+#endif
 			await WithNewItem(value, async (key, value) =>
 			{
 				var result = await Client.GetAsync<object>(key) as byte[];

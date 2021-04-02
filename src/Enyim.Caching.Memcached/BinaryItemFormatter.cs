@@ -5,6 +5,10 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
+#if (NETSTANDARD2_0 || NET471 || NET472 || NET48)
+using Caching;
+#endif
+
 namespace Enyim.Caching.Memcached
 {
 	public class BinaryItemFormatter : IItemFormatter
@@ -92,8 +96,23 @@ namespace Enyim.Caching.Memcached
 
 					case TypeCode.DateTime: BinaryPrimitives.WriteInt64LittleEndian(output.Request(sizeof(Int64)).Span, ((DateTime)value).ToBinary()); break;
 
-					case TypeCode.Single: BitConverter.TryWriteBytes(output.Request(sizeof(Single)).Span, (Single)value); break;
-					case TypeCode.Double: BitConverter.TryWriteBytes(output.Request(sizeof(Double)).Span, (Double)value); break;
+					case TypeCode.Single:
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
+						BitConverter.TryWriteBytes(output.Request(sizeof(Single)).Span, (Single)value);
+#else
+						var float_bytes = BitConverter.GetBytes((Single)value);
+						output.Append(float_bytes.AsSpan());
+#endif
+						break;
+					case TypeCode.Double:
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
+						BitConverter.TryWriteBytes(output.Request(sizeof(Double)).Span, (Double)value);
+#else
+						var double_bytes = BitConverter.GetBytes((Double)value);
+						output.Append(double_bytes.AsSpan());
+#endif
+
+						break;
 					case TypeCode.Decimal:
 						var src = Decimal.GetBits((Decimal)value);
 						var target = output.Request(sizeof(Int32) * 4).Span;
@@ -161,8 +180,18 @@ namespace Enyim.Caching.Memcached
 
 				case TypeCode.DateTime: return DateTime.FromBinary(BinaryPrimitives.ReadInt64LittleEndian(span));
 
-				case TypeCode.Single: return BitConverter.ToSingle(span);
-				case TypeCode.Double: return BitConverter.ToDouble(span);
+				case TypeCode.Single:
+#if !NETSTANDARD2_0
+					return BitConverter.ToSingle(span);
+#else
+					return BitConverter.ToSingle(span.ToArray(),0);
+#endif
+				case TypeCode.Double:
+#if !NETSTANDARD2_0
+					return BitConverter.ToDouble(span);
+#else
+					return BitConverter.ToDouble(span.ToArray(), 0);
+#endif
 				case TypeCode.Decimal:
 
 					var bits = new int[4];
