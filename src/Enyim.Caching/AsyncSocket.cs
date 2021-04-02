@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Enyim.Caching
@@ -50,15 +51,19 @@ namespace Enyim.Caching
 		private int isReceiving;
 		private int isSending;
 
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
 		private readonly MemoryPool<byte> allocator;
 
 		private IMemoryOwner<byte> responseMemory;
-		private SocketAsyncEventArgs? responseArgs;
-		private ReadBuffer? responseBuffer;
-
 		private IMemoryOwner<byte> requestMemory;
-		private SocketAsyncEventArgs? requestArgs;
+#else
+		private byte[] responseMemory;
+		private byte[] requestMemory;
+#endif
+		private ReadBuffer? responseBuffer;
 		private WriteBuffer? requestBuffer;
+		private SocketAsyncEventArgs? responseArgs;
+		private SocketAsyncEventArgs? requestArgs;
 
 		internal protected AsyncSocket(MemoryPool<byte> allocator)
 		{
@@ -70,11 +75,15 @@ namespace Enyim.Caching
 
 			RequestBufferSize = Defaults.SendBufferSize;
 			ResponseBufferSize = Defaults.ReceiveBufferSize;
-
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
 			responseMemory = OwnedMemory<byte>.Empty;
 			requestMemory = OwnedMemory<byte>.Empty;
 
 			this.allocator = allocator;
+#else
+			responseMemory = Array.Empty<byte>();
+			requestMemory = Array.Empty<byte>();
+#endif
 		}
 
 		public IPEndPoint EndPoint => endpoint ?? throw new InvalidOperationException("Socket is not connected to any endpoints yet");
@@ -130,19 +139,26 @@ namespace Enyim.Caching
 			}
 		}
 
-		#region [ Init                         ]
+#region [ Init                         ]
 
 		private void InitBuffers()
 		{
 			if (requestBuffer == null)
 			{
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
 				// allocate the the buffers
 				requestMemory = allocator.Rent(RequestBufferSize);
 				responseMemory = allocator.Rent(ResponseBufferSize);
 
 				requestBuffer = new WriteBuffer(requestMemory.Memory.Take(RequestBufferSize));
 				responseBuffer = new ReadBuffer(responseMemory.Memory.Take(ResponseBufferSize));
+#else
+				requestMemory = new byte[RequestBufferSize];
+				responseMemory = new byte[responseBufferSize];
+				requestBuffer = new WriteBuffer(requestMemory.AsMemory());
+				responseBuffer = new ReadBuffer(responseMemory.AsMemory());
 
+#endif
 				// setup the outgoing channel
 				requestArgs = new SocketAsyncEventArgs();
 				requestArgs.Completed += RequestSent;
@@ -150,7 +166,12 @@ namespace Enyim.Caching
 				// setup the incoming channel
 				responseArgs = new SocketAsyncEventArgs();
 				responseArgs.Completed += ResponseReceived;
+
+#if (NETSTANDARD2_0 || NET471 || NET472 || NET48)
+				responseArgs.SetBuffer(responseMemory, 0, ResponseBufferSize);
+#else
 				responseArgs.SetBuffer(responseMemory.Memory.Take(ResponseBufferSize));
+#endif
 			}
 			else
 			{
@@ -175,7 +196,7 @@ namespace Enyim.Caching
 			};
 		}
 
-		#endregion
+#endregion
 
 		public bool SendRequest(Action<bool> whenDone)
 		{
@@ -430,17 +451,23 @@ namespace Enyim.Caching
 			{
 				if (socket != null)
 				{
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
 					using (requestMemory)
 					using (responseMemory)
+#endif
 					using (responseArgs)
 					using (requestArgs)
 					{
 						if (requestArgs != null) requestArgs.Completed -= RequestSent;
 						if (responseArgs != null) responseArgs.Completed -= ResponseReceived;
 					}
-
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
 					requestMemory = OwnedMemory<byte>.Empty;
 					responseMemory = OwnedMemory<byte>.Empty;
+#else
+					requestMemory = Array.Empty<byte>();
+					responseMemory = Array.Empty<byte>();
+#endif
 					requestArgs = null;
 					responseArgs = null;
 
