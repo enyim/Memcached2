@@ -106,7 +106,7 @@ namespace Enyim.Caching.Memcached
 						break;
 					case TypeCode.Double:
 #if !NETSTANDARD2_0
-						BitConverter.TryWriteBytes(output.Request(sizeof(Single)).Span, (Single)value);
+						BitConverter.TryWriteBytes(output.Request(sizeof(Double)).Span, (Double)value);
 #else
 						var double_bytes = BitConverter.GetBytes((Double)value);
 						output.Append(double_bytes.AsSpan());
