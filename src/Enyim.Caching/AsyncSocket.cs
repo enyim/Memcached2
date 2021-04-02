@@ -233,7 +233,11 @@ namespace Enyim.Caching
 			for (; ; )
 			{
 				// try sending all our data
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
 				requestArgs.SetBuffer(data);
+#else
+				requestArgs.SetBuffer(data.ToArray(),0, data.Length);
+#endif
 				// send is being done asynchrously (SendAsyncCompleted will clean up)
 				if (socket.SendAsync(requestArgs))
 				{

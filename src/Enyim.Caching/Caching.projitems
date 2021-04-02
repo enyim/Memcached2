@@ -42,7 +42,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)SerializationException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SequenceBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SequenceBuilder.Segment.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SocketAsyncEventArgsExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SocketOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tracing\AsyncSocketEventSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tracing\NodeBase.cs" />
