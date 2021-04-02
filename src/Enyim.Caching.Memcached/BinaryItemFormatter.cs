@@ -97,7 +97,7 @@ namespace Enyim.Caching.Memcached
 					case TypeCode.DateTime: BinaryPrimitives.WriteInt64LittleEndian(output.Request(sizeof(Int64)).Span, ((DateTime)value).ToBinary()); break;
 
 					case TypeCode.Single:
-#if !NETSTANDARD2_0
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
 						BitConverter.TryWriteBytes(output.Request(sizeof(Single)).Span, (Single)value);
 #else
 						var float_bytes = BitConverter.GetBytes((Single)value);
@@ -105,7 +105,7 @@ namespace Enyim.Caching.Memcached
 #endif
 						break;
 					case TypeCode.Double:
-#if !NETSTANDARD2_0
+#if !(NETSTANDARD2_0 || NET471 || NET472 || NET48)
 						BitConverter.TryWriteBytes(output.Request(sizeof(Double)).Span, (Double)value);
 #else
 						var double_bytes = BitConverter.GetBytes((Double)value);
